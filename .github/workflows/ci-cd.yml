@@ -1,0 +1,56 @@
+name: Pipeline CI/CD CRM Culturizarte
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  pruebas-y-migraciones:
+    runs-on: ubuntu-latest
+    
+    # Crea una base de datos PostgreSQL temporal solo para que GitHub haga las pruebas
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: testing_db
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: root
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Configurar entorno PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: pdo_pgsql, pgsql
+
+    - name: Instalar dependencias de Laravel
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: Preparar archivo .env para pruebas
+      run: |
+        cp .env.example .env
+        sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=pgsql/' .env
+        sed -i 's/DB_HOST=127.0.0.1/DB_HOST=127.0.0.1/' .env
+        sed -i 's/DB_PORT=3306/DB_PORT=5432/' .env
+        sed -i 's/DB_DATABASE=laravel/DB_DATABASE=testing_db/' .env
+        sed -i 's/DB_USERNAME=root/DB_USERNAME=root/' .env
+        sed -i 's/DB_PASSWORD=/DB_PASSWORD=root/' .env
+
+    - name: Generar Key de Laravel
+      run: php artisan key:generate
+
+    - name: Test de migraciones (Integridad de la base de datos)
+      run: php artisan migrate --force --env=testing
+
+    - name: Pruebas unitarias
+      run: php artisan test
