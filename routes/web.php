@@ -1,17 +1,19 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\DocenteController;
 use App\Http\Controllers\Web\InstitucionController;
+use App\Http\Controllers\Web\VisitaController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', DashboardController::class)
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -24,6 +26,11 @@ Route::middleware(['auth', 'verified', 'role:Administrador'])->group(function ()
     Route::resource('instituciones', InstitucionController::class)
         ->parameters(['instituciones' => 'institucion']);
     Route::resource('docentes', DocenteController::class)->except('show');
+});
+
+// Sprint 4: visitas comerciales (administrador audita todas, asesor ve las suyas).
+Route::middleware(['auth', 'verified', 'role:Administrador|Asesor'])->group(function () {
+    Route::resource('visitas', VisitaController::class)->only(['index', 'create', 'store', 'show']);
 });
 
 require __DIR__.'/auth.php';

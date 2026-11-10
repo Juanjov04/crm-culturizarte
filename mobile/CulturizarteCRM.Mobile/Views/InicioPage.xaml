@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CulturizarteCRM.Mobile.Views.InicioPage"
+             Title="Inicio">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="16">
+            <Label x:Name="SaludoLabel" FontSize="24" FontAttributes="Bold" />
+            <Label Text="Registra aquí las visitas que realizas a colegios y docentes."
+                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+
+            <Border Padding="16" StrokeShape="RoundRectangle 12"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Visitas registradas hoy" FontSize="14" />
+                    <Label x:Name="VisitasHoyLabel" Text="—" FontSize="32" FontAttributes="Bold" />
+                    <Label x:Name="EstadoLabel" FontSize="13"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="+ Nueva visita" Clicked="OnNuevaVisitaClicked" HeightRequest="60" FontSize="18" />
+            <Button Text="Mis visitas" Clicked="OnMisVisitasClicked" HeightRequest="52"
+                    BackgroundColor="{StaticResource Secondary}" TextColor="{StaticResource Primary}" />
+            <Button Text="Cerrar sesión" Clicked="OnCerrarSesionClicked" Margin="0,24,0,0"
+                    BackgroundColor="Transparent" TextColor="#B91C1C" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

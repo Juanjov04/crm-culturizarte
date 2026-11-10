@@ -8,7 +8,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Visita extends Model
 {
+    public const NIVELES_INTERES = ['bajo', 'medio', 'alto'];
+
+    public const ESTADOS_ADOPCION = ['prospecto', 'interesado', 'adoptado', 'desertado'];
+
     protected $guarded = [];
+
+    protected function casts(): array
+    {
+        return [
+            'fecha_visita' => 'datetime',
+            'latitud' => 'float',
+            'longitud' => 'float',
+        ];
+    }
 
     public function user(): BelongsTo
     {

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="CulturizarteCRM.Mobile.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:CulturizarteCRM.Mobile.Views"
+    Shell.FlyoutBehavior="Disabled"
+    Title="CRM Culturizarte">
+
+    <ShellContent
+        Title="Iniciar sesión"
+        ContentTemplate="{DataTemplate views:LoginPage}"
+        Route="login" />
+
+    <ShellContent
+        Title="Inicio"
+        ContentTemplate="{DataTemplate views:InicioPage}"
+        Route="inicio" />
+
+</Shell>

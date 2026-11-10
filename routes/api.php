@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\InstitucionController;
+use App\Http\Controllers\Api\VisitaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,5 +22,10 @@ Route::prefix('v1')->group(function () {
         Route::get('instituciones', [InstitucionController::class, 'index'])->name('api.instituciones.index');
         Route::get('instituciones/{institucion}', [InstitucionController::class, 'show'])->name('api.instituciones.show');
         Route::get('instituciones/{institucion}/docentes', [InstitucionController::class, 'docentes'])->name('api.instituciones.docentes');
+
+        // Sprint 4: registro de visitas comerciales.
+        Route::get('visitas', [VisitaController::class, 'index'])->name('api.visitas.index');
+        Route::post('visitas', [VisitaController::class, 'store'])->name('api.visitas.store');
+        Route::get('visitas/{visita}', [VisitaController::class, 'show'])->name('api.visitas.show');
     });
 });

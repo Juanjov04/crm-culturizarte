@@ -23,6 +23,11 @@
                             Docentes
                         </x-nav-link>
                     @endrole
+                    @hasanyrole('Administrador|Asesor')
+                        <x-nav-link :href="route('visitas.index')" :active="request()->routeIs('visitas.*')">
+                            Visitas
+                        </x-nav-link>
+                    @endhasanyrole
                 </div>
             </div>
 
@@ -86,6 +91,11 @@
                     Docentes
                 </x-responsive-nav-link>
             @endrole
+            @hasanyrole('Administrador|Asesor')
+                <x-responsive-nav-link :href="route('visitas.index')" :active="request()->routeIs('visitas.*')">
+                    Visitas
+                </x-responsive-nav-link>
+            @endhasanyrole
         </div>
 
         <!-- Responsive Settings Options -->

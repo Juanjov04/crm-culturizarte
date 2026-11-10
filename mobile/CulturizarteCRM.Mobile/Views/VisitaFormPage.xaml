@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CulturizarteCRM.Mobile.Views.VisitaFormPage"
+             Title="Nueva visita">
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="20" Spacing="10">
+                <!-- Paso 1: selección del colegio y docente -->
+                <Label Text="1. Institución y docente" FontAttributes="Bold" FontSize="16" />
+                <Picker x:Name="InstitucionPicker" Title="Selecciona la institución"
+                        ItemDisplayBinding="{Binding Descripcion}"
+                        SelectedIndexChanged="OnInstitucionCambiada" />
+                <Picker x:Name="DocentePicker" Title="Selecciona el docente visitado"
+                        ItemDisplayBinding="{Binding Descripcion}" IsEnabled="False" />
+                <Label x:Name="SinDocentesLabel" Text="Esta institución no tiene docentes registrados."
+                       IsVisible="False" FontSize="13" TextColor="#B45309" />
+
+                <!-- Paso 2: datos de la visita -->
+                <Label Text="2. Datos de la visita" FontAttributes="Bold" FontSize="16" Margin="0,12,0,0" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <DatePicker x:Name="FechaPicker" Format="dd/MM/yyyy" />
+                    <TimePicker x:Name="HoraPicker" Grid.Column="1" Format="HH:mm" />
+                </Grid>
+
+                <Label Text="Nivel de interés" />
+                <Picker x:Name="InteresPicker" Title="Nivel de interés" />
+
+                <Label Text="Estado del docente frente a la adopción" />
+                <Picker x:Name="EstadoPicker" Title="Estado del docente" />
+
+                <!-- Paso 3: acuerdos y observaciones -->
+                <Label Text="3. Acuerdos y observaciones" FontAttributes="Bold" FontSize="16" Margin="0,12,0,0" />
+                <Editor x:Name="AcuerdosEditor" Placeholder="Acuerdos alcanzados" AutoSize="TextChanges" MinimumHeightRequest="80" MaxLength="2000" />
+                <Editor x:Name="ObservacionesEditor" Placeholder="Observaciones" AutoSize="TextChanges" MinimumHeightRequest="80" MaxLength="2000" />
+
+                <Label x:Name="ErrorLabel" TextColor="#B91C1C" IsVisible="False" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <VerticalStackLayout Grid.Row="1" Padding="20,8,20,20" Spacing="8">
+            <ActivityIndicator x:Name="Cargando" IsRunning="False" IsVisible="False" />
+            <Button x:Name="GuardarButton" Text="Registrar visita" Clicked="OnGuardarClicked" HeightRequest="56" FontSize="18" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

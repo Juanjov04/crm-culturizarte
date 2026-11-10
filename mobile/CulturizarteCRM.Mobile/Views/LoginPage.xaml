@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CulturizarteCRM.Mobile.Views.LoginPage"
+             Shell.NavBarIsVisible="False"
+             Title="Iniciar sesión">
+    <ScrollView>
+        <VerticalStackLayout Padding="24,48" Spacing="16" MaximumWidthRequest="480">
+            <Label Text="CRM Culturizarte" FontSize="28" FontAttributes="Bold" HorizontalOptions="Center" />
+            <Label Text="App del asesor comercial" FontSize="16" HorizontalOptions="Center"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+
+            <Label Text="Correo" Margin="0,16,0,0" />
+            <Entry x:Name="EmailEntry" Keyboard="Email" Placeholder="asesor@culturizarte.test" />
+
+            <Label Text="Contraseña" />
+            <Entry x:Name="PasswordEntry" IsPassword="True" Placeholder="••••••••" Completed="OnIngresarClicked" />
+
+            <Label x:Name="ErrorLabel" TextColor="#B91C1C" IsVisible="False" />
+
+            <Button x:Name="IngresarButton" Text="Ingresar" Clicked="OnIngresarClicked" HeightRequest="52" FontSize="18" />
+            <ActivityIndicator x:Name="Cargando" IsRunning="False" IsVisible="False" />
+
+            <Label Text="Servidor de la API" Margin="0,24,0,0" FontSize="13"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+            <Entry x:Name="UrlEntry" Keyboard="Url" FontSize="13" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
