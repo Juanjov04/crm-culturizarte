@@ -15,11 +15,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call(RoleSeeder::class);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Usuarios de prueba (contraseña: "password"). Cambiarlas antes de producción.
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@culturizarte.test'],
+            ['name' => 'Administrador CRM', 'password' => 'password', 'email_verified_at' => now()]
+        );
+        $admin->syncRoles(['Administrador']);
+
+        $asesor = User::firstOrCreate(
+            ['email' => 'asesor@culturizarte.test'],
+            ['name' => 'Asesor Comercial Demo', 'password' => 'password', 'email_verified_at' => now()]
+        );
+        $asesor->syncRoles(['Asesor']);
     }
 }

@@ -65,7 +65,8 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    // Ecuador (UTC-5): las visitas se registran y muestran en hora local.
+    'timezone' => env('APP_TIMEZONE', 'America/Guayaquil'),
 
     /*
     |--------------------------------------------------------------------------
