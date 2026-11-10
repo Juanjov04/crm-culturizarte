@@ -52,5 +52,17 @@ jobs:
     - name: Test de migraciones (Integridad de la base de datos)
       run: php artisan migrate --force --env=testing
 
+    # Las vistas usan @vite: sin public/build/manifest.json responden 500.
+    - name: Configurar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+
+    - name: Compilar assets (Vite)
+      run: |
+        npm ci
+        npm run build
+
     - name: Pruebas unitarias
       run: php artisan test
