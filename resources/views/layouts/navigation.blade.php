@@ -15,6 +15,14 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    @role('Administrador')
+                        <x-nav-link :href="route('instituciones.index')" :active="request()->routeIs('instituciones.*')">
+                            Instituciones
+                        </x-nav-link>
+                        <x-nav-link :href="route('docentes.index')" :active="request()->routeIs('docentes.*')">
+                            Docentes
+                        </x-nav-link>
+                    @endrole
                 </div>
             </div>
 
@@ -70,6 +78,14 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            @role('Administrador')
+                <x-responsive-nav-link :href="route('instituciones.index')" :active="request()->routeIs('instituciones.*')">
+                    Instituciones
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('docentes.index')" :active="request()->routeIs('docentes.*')">
+                    Docentes
+                </x-responsive-nav-link>
+            @endrole
         </div>
 
         <!-- Responsive Settings Options -->

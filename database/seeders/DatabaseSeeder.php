@@ -29,5 +29,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Asesor Comercial Demo', 'password' => 'password', 'email_verified_at' => now()]
         );
         $asesor->syncRoles(['Asesor']);
+
+        $this->call(DirectorioDemoSeeder::class);
     }
 }
