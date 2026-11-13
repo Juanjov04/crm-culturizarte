@@ -1,7 +1,7 @@
 @props(['activo' => true])
 
 @if ($activo)
-    <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">Activa</span>
+    <span class="pill bg-green-50 text-green-700 ring-1 ring-green-200"><span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>Activa</span>
 @else
-    <span class="inline-flex items-center rounded-full bg-gray-200 px-2.5 py-0.5 text-xs font-medium text-gray-700">Inactiva</span>
+    <span class="pill bg-slate-100 text-slate-600 ring-1 ring-slate-200"><span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>Inactiva</span>
 @endif

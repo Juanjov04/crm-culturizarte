@@ -3,27 +3,83 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CulturizarteCRM.Mobile.Views.LoginPage"
              Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Navy950}"
              Title="Iniciar sesión">
+
+    <ContentPage.Resources>
+        <Style x:Key="EtiquetaCampo" TargetType="Label">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="CharacterSpacing" Value="1.5" />
+            <Setter Property="TextColor" Value="#94A3B8" />
+        </Style>
+        <Style x:Key="CajaCampo" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource Navy950}" />
+            <Setter Property="Stroke" Value="{StaticResource NavyBorde}" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+            <Setter Property="Padding" Value="12,2" />
+        </Style>
+        <Style x:Key="EntradaOscura" TargetType="Entry">
+            <Setter Property="TextColor" Value="White" />
+            <Setter Property="PlaceholderColor" Value="#64748B" />
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="FontSize" Value="15" />
+        </Style>
+    </ContentPage.Resources>
+
     <ScrollView>
-        <VerticalStackLayout Padding="24,48" Spacing="16" MaximumWidthRequest="480">
-            <Label Text="CRM Culturizarte" FontSize="28" FontAttributes="Bold" HorizontalOptions="Center" />
-            <Label Text="App del asesor comercial" FontSize="16" HorizontalOptions="Center"
-                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+        <Border Margin="20,40" Padding="22,28" MaximumWidthRequest="460"
+                BackgroundColor="{StaticResource Navy}" Stroke="{StaticResource NavyBorde}"
+                StrokeShape="RoundRectangle 24" VerticalOptions="Center">
+            <VerticalStackLayout Spacing="14">
+                <Image Source="logo_culturizarte.png" HeightRequest="64" HorizontalOptions="Center" />
 
-            <Label Text="Correo" Margin="0,16,0,0" />
-            <Entry x:Name="EmailEntry" Keyboard="Email" Placeholder="asesor@culturizarte.test" />
+                <VerticalStackLayout Spacing="4" Margin="0,4,0,6">
+                    <Label Text="Acceso al Portal CRM" FontSize="20" FontAttributes="Bold"
+                           TextColor="White" HorizontalOptions="Center" />
+                    <Label Text="App del asesor comercial · Visitas B2B" FontSize="13"
+                           TextColor="#94A3B8" HorizontalOptions="Center" />
+                </VerticalStackLayout>
 
-            <Label Text="Contraseña" />
-            <Entry x:Name="PasswordEntry" IsPassword="True" Placeholder="••••••••" Completed="OnIngresarClicked" />
+                <!-- Perfil fijo: esta app es solo para el asesor (el administrador usa el panel web) -->
+                <Border BackgroundColor="{StaticResource Navy950}" Stroke="{StaticResource NavyBorde}"
+                        StrokeShape="RoundRectangle 14" Padding="4">
+                    <Border BackgroundColor="{StaticResource Primary}" StrokeThickness="0"
+                            StrokeShape="RoundRectangle 10" Padding="10">
+                        <Label Text="Asesor Móvil" TextColor="White" FontAttributes="Bold"
+                               FontSize="14" HorizontalOptions="Center" />
+                    </Border>
+                </Border>
 
-            <Label x:Name="ErrorLabel" TextColor="#B91C1C" IsVisible="False" />
+                <Label Text="CORREO DEL ASESOR" Style="{StaticResource EtiquetaCampo}" Margin="0,6,0,0" />
+                <Border Style="{StaticResource CajaCampo}">
+                    <Entry x:Name="EmailEntry" Keyboard="Email" Placeholder="asesor@culturizarte.test"
+                           Style="{StaticResource EntradaOscura}" />
+                </Border>
 
-            <Button x:Name="IngresarButton" Text="Ingresar" Clicked="OnIngresarClicked" HeightRequest="52" FontSize="18" />
-            <ActivityIndicator x:Name="Cargando" IsRunning="False" IsVisible="False" />
+                <Label Text="CONTRASEÑA DEL ASESOR" Style="{StaticResource EtiquetaCampo}" />
+                <Border Style="{StaticResource CajaCampo}">
+                    <Entry x:Name="PasswordEntry" IsPassword="True" Placeholder="••••••••"
+                           Completed="OnIngresarClicked" Style="{StaticResource EntradaOscura}" />
+                </Border>
 
-            <Label Text="Servidor de la API" Margin="0,24,0,0" FontSize="13"
-                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
-            <Entry x:Name="UrlEntry" Keyboard="Url" FontSize="13" />
-        </VerticalStackLayout>
+                <Label x:Name="ErrorLabel" TextColor="#F87171" FontSize="13" IsVisible="False" />
+
+                <Button x:Name="IngresarButton" Text="Ingresar al Portal CRM" Clicked="OnIngresarClicked"
+                        HeightRequest="52" FontSize="16" Margin="0,4,0,0" />
+                <ActivityIndicator x:Name="Cargando" IsRunning="False" IsVisible="False" Color="White" />
+
+                <Label Text="SERVIDOR DE LA API" Style="{StaticResource EtiquetaCampo}" Margin="0,10,0,0" />
+                <Border Style="{StaticResource CajaCampo}">
+                    <Entry x:Name="UrlEntry" Keyboard="Url" FontSize="13" Style="{StaticResource EntradaOscura}" />
+                </Border>
+
+                <Border BackgroundColor="{StaticResource Navy950}" Stroke="{StaticResource NavyBorde}"
+                        StrokeShape="RoundRectangle 14" Padding="14,12" Margin="0,8,0,0">
+                    <Label FontSize="12" TextColor="#94A3B8" LineHeight="1.3"
+                           Text="Usa las credenciales que te asignó el administrador. Las visitas que registres aparecerán en el panel web." />
+                </Border>
+            </VerticalStackLayout>
+        </Border>
     </ScrollView>
 </ContentPage>

@@ -12,9 +12,18 @@
         ContentTemplate="{DataTemplate views:LoginPage}"
         Route="login" />
 
-    <ShellContent
-        Title="Inicio"
-        ContentTemplate="{DataTemplate views:InicioPage}"
-        Route="inicio" />
+    <!-- Barra inferior como en el prototipo (Figura 10). La pestaña de inventario llega en el Sprint 5. -->
+    <TabBar Route="principal">
+        <ShellContent
+            Title="Inicio"
+            Icon="tab_inicio.png"
+            ContentTemplate="{DataTemplate views:InicioPage}"
+            Route="inicio" />
+        <ShellContent
+            Title="Visitas"
+            Icon="tab_visitas.png"
+            ContentTemplate="{DataTemplate views:VisitasPage}"
+            Route="visitas" />
+    </TabBar>
 
 </Shell>

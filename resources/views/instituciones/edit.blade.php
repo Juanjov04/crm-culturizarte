@@ -1,13 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Editar institución</h2>
+        <h2 class="text-xl font-bold text-slate-900">Editar institución</h2>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div>
+        <div class="max-w-3xl mx-auto">
             <x-flash />
 
-            <form method="POST" action="{{ route('instituciones.update', $institucion) }}" class="bg-white p-6 shadow-sm sm:rounded-lg">
+            <form method="POST" action="{{ route('instituciones.update', $institucion) }}" class="card p-6">
                 @csrf
                 @method('PUT')
                 @include('instituciones._form')

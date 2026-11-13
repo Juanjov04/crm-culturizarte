@@ -15,19 +15,19 @@ public partial class InicioPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        SaludoLabel.Text = $"Hola, {_api.UsuarioActual?.Name ?? "asesor"}";
+        SaludoLabel.Text = $"¡Hola, {_api.UsuarioActual?.Name ?? "asesor"}!";
 
         try
         {
             var visitas = await _api.GetMisVisitasAsync();
             var hoy = DateTime.Today;
             VisitasHoyLabel.Text = visitas.Count(v => v.FechaVisita.ToLocalTime().Date == hoy).ToString();
-            EstadoLabel.Text = "Conectado al servidor";
+            MostrarEstado(conectado: true, "Conectado al servidor. ¡Buen trabajo!");
         }
         catch (ApiException ex)
         {
             VisitasHoyLabel.Text = "—";
-            EstadoLabel.Text = ex.Message;
+            MostrarEstado(conectado: false, ex.Message);
 
             if (ex.Status == System.Net.HttpStatusCode.Unauthorized)
             {
@@ -37,11 +37,26 @@ public partial class InicioPage : ContentPage
         }
     }
 
+    // Indicador de conexión de la barra superior y mensaje del resumen.
+    private void MostrarEstado(bool conectado, string mensaje)
+    {
+        var verde = (Color)Application.Current!.Resources["Exito"];
+        var rojo = (Color)Application.Current!.Resources["Tertiary"];
+
+        EstadoPillLabel.Text = conectado ? "● Online" : "● Sin conexión";
+        EstadoPillLabel.TextColor = conectado ? verde : rojo;
+        EstadoPill.Stroke = conectado ? Color.FromArgb("#BBF7D0") : Color.FromArgb("#FECACA");
+
+        EstadoLabel.Text = mensaje;
+        EstadoLabel.TextColor = conectado ? verde : rojo;
+        EstadoBox.BackgroundColor = conectado ? (Color)Application.Current!.Resources["ExitoFondo"] : Color.FromArgb("#FEF2F2");
+    }
+
     private async void OnNuevaVisitaClicked(object? sender, EventArgs e)
         => await Shell.Current.GoToAsync(nameof(VisitaFormPage));
 
     private async void OnMisVisitasClicked(object? sender, EventArgs e)
-        => await Shell.Current.GoToAsync(nameof(VisitasPage));
+        => await Shell.Current.GoToAsync("//visitas");
 
     private async void OnCerrarSesionClicked(object? sender, EventArgs e)
     {

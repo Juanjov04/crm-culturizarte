@@ -81,6 +81,6 @@ class VisitaWebTest extends CrmTestCase
         $this->actingAs($this->usuarioConRol('Administrador'))
             ->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('Instituciones activas');
+            ->assertSee('Colegios activos');
     }
 }

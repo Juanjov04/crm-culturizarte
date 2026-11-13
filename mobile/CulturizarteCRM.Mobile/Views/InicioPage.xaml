@@ -2,28 +2,114 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CulturizarteCRM.Mobile.Views.InicioPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Fondo}"
              Title="Inicio">
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="16">
-            <Label x:Name="SaludoLabel" FontSize="24" FontAttributes="Bold" />
-            <Label Text="Registra aquí las visitas que realizas a colegios y docentes."
-                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
 
-            <Border Padding="16" StrokeShape="RoundRectangle 12"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
-                <VerticalStackLayout Spacing="4">
-                    <Label Text="Visitas registradas hoy" FontSize="14" />
-                    <Label x:Name="VisitasHoyLabel" Text="—" FontSize="32" FontAttributes="Bold" />
-                    <Label x:Name="EstadoLabel" FontSize="13"
-                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
-                </VerticalStackLayout>
-            </Border>
+    <ContentPage.Resources>
+        <Style x:Key="Tarjeta" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="White" />
+            <Setter Property="Stroke" Value="{StaticResource Borde}" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+        </Style>
+    </ContentPage.Resources>
 
-            <Button Text="+ Nueva visita" Clicked="OnNuevaVisitaClicked" HeightRequest="60" FontSize="18" />
-            <Button Text="Mis visitas" Clicked="OnMisVisitasClicked" HeightRequest="52"
-                    BackgroundColor="{StaticResource Secondary}" TextColor="{StaticResource Primary}" />
-            <Button Text="Cerrar sesión" Clicked="OnCerrarSesionClicked" Margin="0,24,0,0"
-                    BackgroundColor="Transparent" TextColor="#B91C1C" />
-        </VerticalStackLayout>
-    </ScrollView>
+    <Grid RowDefinitions="Auto,*">
+        <!-- Barra superior: logo, estado de conexión y salir -->
+        <Border Grid.Row="0" BackgroundColor="White" StrokeThickness="0" Padding="18,12">
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                <Image Source="logo_culturizarte.png" HeightRequest="34" HorizontalOptions="Start" />
+                <Border x:Name="EstadoPill" Grid.Column="1" Padding="12,5" StrokeShape="RoundRectangle 20"
+                        BackgroundColor="White" Stroke="#BBF7D0" VerticalOptions="Center">
+                    <Label x:Name="EstadoPillLabel" Text="● Online" FontSize="12" FontAttributes="Bold"
+                           TextColor="{StaticResource Exito}" />
+                </Border>
+                <Border Grid.Column="2" Padding="10,6" StrokeShape="RoundRectangle 12"
+                        BackgroundColor="{StaticResource Fondo}" Stroke="{StaticResource Borde}" VerticalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnCerrarSesionClicked" />
+                    </Border.GestureRecognizers>
+                    <Label Text="Salir" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextoSuave}" />
+                </Border>
+            </Grid>
+        </Border>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="18" Spacing="16">
+
+                <!-- Tarjeta roja de bienvenida -->
+                <Border StrokeThickness="0" StrokeShape="RoundRectangle 20" Padding="20,18">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#B91C1C" Offset="0" />
+                            <GradientStop Color="#E53E3E" Offset="1" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="ASESOR DE CAMPO" FontSize="12" CharacterSpacing="1.5" TextColor="#FECACA" />
+                        <Label x:Name="SaludoLabel" FontSize="22" FontAttributes="Bold" TextColor="White" />
+                        <Label Text="Registra tus visitas a colegios y docentes." FontSize="13" TextColor="#FEE2E2" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Resumen del día -->
+                <Border Style="{StaticResource Tarjeta}" Padding="20">
+                    <VerticalStackLayout Spacing="10">
+                        <Border WidthRequest="60" HeightRequest="60" StrokeShape="RoundRectangle 30"
+                                BackgroundColor="{StaticResource Fondo}" StrokeThickness="0" HorizontalOptions="Center">
+                            <Label Text="✓" FontSize="26" TextColor="#94A3B8"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Label Text="Visitas registradas hoy" FontSize="14" TextColor="{StaticResource TextoSuave}"
+                               HorizontalOptions="Center" />
+                        <Label x:Name="VisitasHoyLabel" Text="—" FontSize="34" FontAttributes="Bold"
+                               TextColor="{StaticResource TextoFuerte}" HorizontalOptions="Center" />
+                        <Border x:Name="EstadoBox" BackgroundColor="{StaticResource ExitoFondo}" StrokeThickness="0"
+                                StrokeShape="RoundRectangle 10" Padding="12,10">
+                            <Label x:Name="EstadoLabel" Text="Conectando con el servidor…" FontSize="13"
+                                   TextColor="{StaticResource Exito}" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                        </Border>
+                        <Button Text="+  Nueva visita" Clicked="OnNuevaVisitaClicked" HeightRequest="54" FontSize="16" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Accesos rápidos -->
+                <Border Style="{StaticResource Tarjeta}" Padding="16">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnNuevaVisitaClicked" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                        <Border WidthRequest="44" HeightRequest="44" StrokeShape="RoundRectangle 12"
+                                BackgroundColor="{StaticResource Secondary}" StrokeThickness="0">
+                            <Label Text="+" FontSize="24" TextColor="{StaticResource Primary}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                            <Label Text="Nueva Visita B2B" FontSize="15" FontAttributes="Bold" TextColor="{StaticResource TextoFuerte}" />
+                            <Label Text="Registrar visita a colegio y docente" FontSize="12" TextColor="{StaticResource TextoSuave}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" FontSize="26" TextColor="#94A3B8" VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+
+                <Border Style="{StaticResource Tarjeta}" Padding="16">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnMisVisitasClicked" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                        <Border WidthRequest="44" HeightRequest="44" StrokeShape="RoundRectangle 12"
+                                BackgroundColor="#F1F5F9" StrokeThickness="0">
+                            <Label Text="≡" FontSize="22" TextColor="#475569"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                            <Label Text="Mis visitas" FontSize="15" FontAttributes="Bold" TextColor="{StaticResource TextoFuerte}" />
+                            <Label Text="Historial de visitas registradas" FontSize="12" TextColor="{StaticResource TextoSuave}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" FontSize="26" TextColor="#94A3B8" VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

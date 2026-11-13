@@ -8,8 +8,7 @@ public partial class AppShell : Shell
 	{
 		InitializeComponent();
 
-		// Pantallas a las que se navega desde el inicio.
+		// Pantalla a la que se navega desde el inicio (las visitas ya son una pestaña).
 		Routing.RegisterRoute(nameof(VisitaFormPage), typeof(VisitaFormPage));
-		Routing.RegisterRoute(nameof(VisitasPage), typeof(VisitasPage));
 	}
 }

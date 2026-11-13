@@ -1,7 +1,7 @@
 <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
     <div class="sm:col-span-2">
         <x-input-label for="institucion_id" value="Institución *" />
-        <select id="institucion_id" name="institucion_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+        <select id="institucion_id" name="institucion_id" class="mt-1 block w-full" required>
             <option value="">Seleccione una institución activa</option>
             @foreach ($instituciones as $inst)
                 <option value="{{ $inst->id }}" @selected((string) old('institucion_id', $docente->institucion_id) === (string) $inst->id)>

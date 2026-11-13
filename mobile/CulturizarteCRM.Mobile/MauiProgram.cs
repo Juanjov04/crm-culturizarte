@@ -24,6 +24,16 @@ public static class MauiProgram
 		builder.Services.AddTransient<VisitaFormPage>();
 		builder.Services.AddTransient<VisitasPage>();
 
+		// Quita el subrayado nativo de Android en los campos de texto:
+		// en el diseño del prototipo cada campo ya va dentro de su propia caja.
+		Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("SinSubrayado", (handler, view) =>
+		{
+#if ANDROID
+			handler.PlatformView.BackgroundTintList =
+				Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+#endif
+		});
+
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif

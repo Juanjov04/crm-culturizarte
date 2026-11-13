@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Nuevo docente</h2>
+        <h2 class="text-xl font-bold text-slate-900">Nuevo docente</h2>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <form method="POST" action="{{ route('docentes.store') }}" class="bg-white p-6 shadow-sm sm:rounded-lg">
+    <div>
+        <div class="max-w-3xl mx-auto">
+            <form method="POST" action="{{ route('docentes.store') }}" class="card p-6">
                 @csrf
                 @include('docentes._form')
 

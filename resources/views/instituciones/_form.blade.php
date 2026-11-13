@@ -10,7 +10,7 @@
 
     <div>
         <x-input-label for="tipo" value="Tipo de sostenimiento *" />
-        <select id="tipo" name="tipo" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+        <select id="tipo" name="tipo" class="mt-1 block w-full" required>
             @foreach ($tipos as $tipo)
                 <option value="{{ $tipo }}" @selected(old('tipo', $institucion->tipo ?? 'Particular') === $tipo)>{{ $tipo }}</option>
             @endforeach

@@ -7,9 +7,8 @@ use App\Http\Controllers\Web\InstitucionController;
 use App\Http\Controllers\Web\VisitaController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// La raíz lleva al acceso del portal CRM; si ya hay sesión, el middleware "guest" envía al dashboard.
+Route::redirect('/', '/login');
 
 Route::get('/dashboard', DashboardController::class)
     ->middleware(['auth', 'verified'])

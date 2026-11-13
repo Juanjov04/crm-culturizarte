@@ -3,22 +3,28 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:m="clr-namespace:CulturizarteCRM.Mobile.Models"
              x:Class="CulturizarteCRM.Mobile.Views.VisitasPage"
+             BackgroundColor="{StaticResource Fondo}"
              Title="Mis visitas">
-    <RefreshView x:Name="Refresco" Refreshing="OnRefrescar">
-        <CollectionView x:Name="ListaVisitas" Margin="12">
+    <RefreshView x:Name="Refresco" Refreshing="OnRefrescar" RefreshColor="{StaticResource Primary}">
+        <CollectionView x:Name="ListaVisitas" Margin="16,8">
             <CollectionView.EmptyView>
-                <Label x:Name="VacioLabel" Text="Aún no has registrado visitas." HorizontalOptions="Center" Margin="0,40" />
+                <Label x:Name="VacioLabel" Text="Aún no has registrado visitas." HorizontalOptions="Center"
+                       TextColor="{StaticResource TextoSuave}" Margin="0,40" />
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="m:Visita">
-                    <Border Margin="0,6" Padding="14" StrokeShape="RoundRectangle 10"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
-                        <VerticalStackLayout Spacing="2">
-                            <Label Text="{Binding Titulo}" FontAttributes="Bold" FontSize="16" />
-                            <Label Text="{Binding Detalle}" FontSize="14" />
-                            <Label Text="{Binding FechaTexto}" FontSize="12"
-                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
-                        </VerticalStackLayout>
+                    <Border Margin="0,6" Padding="16" StrokeShape="RoundRectangle 16"
+                            BackgroundColor="White" Stroke="{StaticResource Borde}">
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="4">
+                            <Label Text="{Binding Titulo}" FontAttributes="Bold" FontSize="15"
+                                   TextColor="{StaticResource TextoFuerte}" />
+                            <Border Grid.Column="1" Padding="10,3" StrokeShape="RoundRectangle 10"
+                                    BackgroundColor="{StaticResource ExitoFondo}" StrokeThickness="0" VerticalOptions="Start">
+                                <Label Text="{Binding FechaTexto}" FontSize="11" TextColor="{StaticResource Exito}" />
+                            </Border>
+                            <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Detalle}" FontSize="13"
+                                   TextColor="{StaticResource TextoSuave}" />
+                        </Grid>
                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
