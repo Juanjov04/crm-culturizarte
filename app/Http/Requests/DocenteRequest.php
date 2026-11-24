@@ -27,13 +27,14 @@ class DocenteRequest extends FormRequest
             ],
             'nombres' => ['required', 'string', 'max:100'],
             'apellidos' => ['required', 'string', 'max:100'],
-            // Observación del jurado: la cédula debe ser ecuatoriana válida.
+            // Observaciones del jurado: todos los datos son obligatorios y la
+            // cédula debe ser ecuatoriana válida (solo números).
             'cedula' => [
-                'nullable', 'digits:10', new CedulaEcuatoriana,
+                'required', 'digits:10', new CedulaEcuatoriana,
                 Rule::unique('docentes', 'cedula')->ignore($docente?->id),
             ],
-            'email' => ['nullable', 'email', 'max:255'],
-            'telefono' => ['nullable', 'string', 'max:20'],
+            'email' => ['required', 'email', 'max:255'],
+            'telefono' => ['required', 'regex:/^[0-9]{9,10}$/'],
             'area_asignatura' => ['required', 'string', 'max:100'],
         ];
     }
@@ -43,6 +44,8 @@ class DocenteRequest extends FormRequest
         return [
             'institucion_id.exists' => 'El docente debe asignarse a una institución activa.',
             'cedula.unique' => 'Ya existe un docente con esta cédula.',
+            'cedula.digits' => 'La cédula debe tener 10 números, sin letras ni símbolos.',
+            'telefono.regex' => 'El teléfono debe tener 9 o 10 números (fijo o celular), sin letras ni símbolos.',
         ];
     }
 
@@ -53,6 +56,7 @@ class DocenteRequest extends FormRequest
             'area_asignatura' => 'área / asignatura',
             'cedula' => 'cédula',
             'telefono' => 'teléfono',
+            'email' => 'correo',
         ];
     }
 }

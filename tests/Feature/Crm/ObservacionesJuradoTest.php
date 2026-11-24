@@ -96,6 +96,8 @@ class ObservacionesJuradoTest extends CrmTestCase
                 'nombres' => 'Luis',
                 'apellidos' => 'Mora',
                 'cedula' => '1712345678',
+                'telefono' => '0991234567',
+                'email' => 'luis.mora@colegio.ec',
                 'area_asignatura' => 'Matemática',
             ])
             ->assertSessionHasErrors('cedula');
@@ -168,5 +170,40 @@ class ObservacionesJuradoTest extends CrmTestCase
             ->assertSee('<select id="provincia"', false)
             ->assertSee('<select id="ciudad"', false)
             ->assertSee('Zamora Chinchipe');
+    }
+
+    public function test_docente_exige_todos_los_datos(): void
+    {
+        $institucion = $this->institucion();
+
+        $this->actingAs($this->usuarioConRol('Administrador'))
+            ->post(route('docentes.store'), ['institucion_id' => $institucion->id])
+            ->assertSessionHasErrors(['nombres', 'apellidos', 'cedula', 'telefono', 'email', 'area_asignatura']);
+    }
+
+    public function test_cedula_y_telefono_no_aceptan_letras(): void
+    {
+        $institucion = $this->institucion();
+
+        $this->actingAs($this->usuarioConRol('Administrador'))
+            ->post(route('docentes.store'), [
+                'institucion_id' => $institucion->id,
+                'nombres' => 'Luis',
+                'apellidos' => 'Mora',
+                'cedula' => '17100340a5',
+                'telefono' => '099abc4567',
+                'email' => 'luis.mora@colegio.ec',
+                'area_asignatura' => 'Matemática',
+            ])
+            ->assertSessionHasErrors(['cedula', 'telefono']);
+    }
+
+    public function test_formulario_de_docente_solo_permite_numeros_en_la_cedula(): void
+    {
+        $this->actingAs($this->usuarioConRol('Administrador'))
+            ->get(route('docentes.create'))
+            ->assertOk()
+            ->assertSee("this.value.replace(/[^0-9]/g, '')", false)
+            ->assertDontSee('se valida el dígito verificador');
     }
 }

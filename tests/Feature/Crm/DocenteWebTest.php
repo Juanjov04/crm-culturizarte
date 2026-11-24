@@ -19,6 +19,8 @@ class DocenteWebTest extends CrmTestCase
                 'nombres' => 'Luis',
                 'apellidos' => 'Torres',
                 'cedula' => '1710034065',
+                'telefono' => '0991234567',
+                'email' => 'luis.torres@colegio.ec',
                 'area_asignatura' => 'Matemática',
             ])
             ->assertRedirect(route('instituciones.show', $institucion));
@@ -35,6 +37,9 @@ class DocenteWebTest extends CrmTestCase
                 'institucion_id' => $inactiva->id,
                 'nombres' => 'Luis',
                 'apellidos' => 'Torres',
+                'cedula' => '0926687856',
+                'telefono' => '0991234567',
+                'email' => 'luis@colegio.ec',
                 'area_asignatura' => 'Matemática',
             ])
             ->assertSessionHasErrors('institucion_id');
@@ -65,6 +70,9 @@ class DocenteWebTest extends CrmTestCase
                 'institucion_id' => $docente->institucion_id,
                 'nombres' => 'Ana María',
                 'apellidos' => 'Pérez',
+                'cedula' => '1714616123',
+                'telefono' => '022501234',
+                'email' => 'ana.perez@colegio.ec',
                 'area_asignatura' => 'Comprensión Lectora',
             ])
             ->assertRedirect(route('docentes.index'));

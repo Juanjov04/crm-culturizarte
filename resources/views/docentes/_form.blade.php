@@ -25,10 +25,10 @@
     </div>
 
     <div>
-        <x-input-label for="cedula" value="Cédula" />
-        <x-text-input id="cedula" name="cedula" class="mt-1 block w-full" maxlength="10" inputmode="numeric" pattern="[0-9]{10}"
-            title="Cédula ecuatoriana de 10 dígitos" :value="old('cedula', $docente->cedula)" />
-        <p class="mt-1 text-xs text-slate-500">Cédula ecuatoriana de 10 dígitos; se valida el dígito verificador.</p>
+        <x-input-label for="cedula" value="Cédula *" />
+        {{-- Solo acepta números: cualquier letra o símbolo se elimina al escribir o pegar. --}}
+        <x-text-input id="cedula" name="cedula" class="mt-1 block w-full" maxlength="10" minlength="10" inputmode="numeric" pattern="[0-9]{10}"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '')" :value="old('cedula', $docente->cedula)" required />
         <x-input-error :messages="$errors->get('cedula')" class="mt-2" />
     </div>
 
@@ -45,14 +45,15 @@
     </div>
 
     <div>
-        <x-input-label for="telefono" value="Teléfono" />
-        <x-text-input id="telefono" name="telefono" class="mt-1 block w-full" :value="old('telefono', $docente->telefono)" />
+        <x-input-label for="telefono" value="Teléfono *" />
+        <x-text-input id="telefono" name="telefono" class="mt-1 block w-full" maxlength="10" minlength="9" inputmode="numeric" pattern="[0-9]{9,10}"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '')" :value="old('telefono', $docente->telefono)" required />
         <x-input-error :messages="$errors->get('telefono')" class="mt-2" />
     </div>
 
     <div>
-        <x-input-label for="email" value="Correo" />
-        <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $docente->email)" />
+        <x-input-label for="email" value="Correo *" />
+        <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $docente->email)" required />
         <x-input-error :messages="$errors->get('email')" class="mt-2" />
     </div>
 </div>
