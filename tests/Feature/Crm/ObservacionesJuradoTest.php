@@ -128,6 +128,8 @@ class ObservacionesJuradoTest extends CrmTestCase
             'nombre' => 'Unidad Educativa Prueba',
             'tipo' => 'Fiscal',
             'direccion' => 'Calle 1',
+            'telefono' => '022501234',
+            'email_contacto' => 'contacto@colegio.ec',
             'activo' => '1',
         ];
     }
@@ -205,5 +207,21 @@ class ObservacionesJuradoTest extends CrmTestCase
             ->assertOk()
             ->assertSee("this.value.replace(/[^0-9]/g, '')", false)
             ->assertDontSee('se valida el dígito verificador');
+    }
+
+    public function test_institucion_exige_telefono_y_correo_y_telefono_sin_letras(): void
+    {
+        $admin = $this->usuarioConRol('Administrador');
+        $datos = $this->datosInstitucion(['provincia' => 'Azuay', 'ciudad' => 'Cuenca']);
+
+        $this->actingAs($admin)
+            ->post(route('instituciones.store'), array_diff_key($datos, array_flip(['telefono', 'email_contacto'])))
+            ->assertSessionHasErrors(['telefono', 'email_contacto']);
+
+        $this->actingAs($admin)
+            ->post(route('instituciones.store'), ['telefono' => '07abc1234'] + $datos)
+            ->assertSessionHasErrors('telefono');
+
+        $this->assertSame(0, Institucion::count());
     }
 }

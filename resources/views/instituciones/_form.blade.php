@@ -56,8 +56,9 @@
     </div>
 
     <div>
-        <x-input-label for="telefono" value="Teléfono" />
-        <x-text-input id="telefono" name="telefono" class="mt-1 block w-full" :value="old('telefono', $institucion->telefono)" />
+        <x-input-label for="telefono" value="Teléfono *" />
+        <x-text-input id="telefono" name="telefono" class="mt-1 block w-full" maxlength="10" minlength="9" inputmode="numeric" pattern="[0-9]{9,10}"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '')" :value="old('telefono', $institucion->telefono)" required />
         <x-input-error :messages="$errors->get('telefono')" class="mt-2" />
     </div>
 
@@ -68,8 +69,8 @@
     </div>
 
     <div>
-        <x-input-label for="email_contacto" value="Correo de contacto" />
-        <x-text-input id="email_contacto" name="email_contacto" type="email" class="mt-1 block w-full" :value="old('email_contacto', $institucion->email_contacto)" />
+        <x-input-label for="email_contacto" value="Correo de contacto *" />
+        <x-text-input id="email_contacto" name="email_contacto" type="email" class="mt-1 block w-full" :value="old('email_contacto', $institucion->email_contacto)" required />
         <x-input-error :messages="$errors->get('email_contacto')" class="mt-2" />
     </div>
 

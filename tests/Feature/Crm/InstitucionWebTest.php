@@ -41,6 +41,8 @@ class InstitucionWebTest extends CrmTestCase
                 'provincia' => 'Pichincha',
                 'ciudad' => 'Quito',
                 'direccion' => 'Calle 1',
+                'telefono' => '022501234',
+                'email_contacto' => 'contacto@colegio.ec',
                 'activo' => '1',
             ]);
 
@@ -61,6 +63,8 @@ class InstitucionWebTest extends CrmTestCase
                 'provincia' => 'Pichincha',
                 'ciudad' => 'Quito',
                 'direccion' => 'Calle 2',
+                'telefono' => '022501234',
+                'email_contacto' => 'contacto@colegio.ec',
             ])
             ->assertSessionHasErrors('codigo_amie');
 
@@ -80,6 +84,8 @@ class InstitucionWebTest extends CrmTestCase
                 'provincia' => 'Pichincha',
                 'ciudad' => 'Quito',
                 'direccion' => 'Calle 3',
+                'telefono' => '022501234',
+                'email_contacto' => 'contacto@colegio.ec',
                 'activo' => '0',
             ])
             ->assertRedirect(route('instituciones.show', $institucion))

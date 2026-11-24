@@ -40,8 +40,9 @@ class InstitucionRequest extends FormRequest
             'provincia' => ['required', Rule::in(array_keys(Ecuador::provincias()))],
             'ciudad' => ['required', Rule::in(Ecuador::cantones($this->input('provincia')))],
             'direccion' => ['required', 'string', 'max:255'],
-            'telefono' => ['nullable', 'string', 'max:20'],
-            'email_contacto' => ['nullable', 'email', 'max:255'],
+            // Observación del jurado: todos los datos son obligatorios; el teléfono solo con números.
+            'telefono' => ['required', 'regex:/^[0-9]{9,10}$/'],
+            'email_contacto' => ['required', 'email', 'max:255'],
             'activo' => ['boolean'],
         ];
     }
@@ -53,6 +54,7 @@ class InstitucionRequest extends FormRequest
             'codigo_amie.regex' => 'El código AMIE solo puede contener letras y números.',
             'provincia.in' => 'Seleccione una provincia de la lista.',
             'ciudad.in' => 'Seleccione una ciudad de la provincia elegida.',
+            'telefono.regex' => 'El teléfono debe tener 9 o 10 números (fijo o celular), sin letras ni símbolos.',
         ];
     }
 
