@@ -58,6 +58,9 @@ public partial class InicioPage : ContentPage
     private async void OnMisVisitasClicked(object? sender, EventArgs e)
         => await Shell.Current.GoToAsync("//visitas");
 
+    private async void OnInventarioClicked(object? sender, EventArgs e)
+        => await Shell.Current.GoToAsync("//inventario");
+
     private async void OnCerrarSesionClicked(object? sender, EventArgs e)
     {
         if (await DisplayAlert("Cerrar sesión", "¿Deseas salir de la aplicación?", "Sí", "No"))

@@ -1,0 +1,20 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="text-xl font-bold text-slate-900">Editar texto escolar</h2>
+    </x-slot>
+
+    <div>
+        <div class="max-w-3xl mx-auto">
+            <form method="POST" action="{{ route('productos.update', $producto) }}" class="card p-6">
+                @csrf
+                @method('PUT')
+                @include('productos._form')
+
+                <div class="mt-6 flex items-center justify-end gap-3">
+                    <a href="{{ route('productos.index') }}" class="text-sm text-gray-600 hover:underline">Cancelar</a>
+                    <x-primary-button>Guardar</x-primary-button>
+                </div>
+            </form>
+        </div>
+    </div>
+</x-app-layout>

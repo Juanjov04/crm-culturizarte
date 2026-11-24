@@ -73,7 +73,7 @@ class ApiTest extends CrmTestCase
             'uuid_offline' => $uuid,
             'institucion_id' => $institucion->id,
             'docente_id' => $docente->id,
-            'fecha_visita' => now()->subHour()->toIso8601String(),
+            'fecha_visita' => now()->toIso8601String(),
             'nivel_interes' => 'alto',
             'estado_adopcion' => 'interesado',
             'acuerdos' => 'Enviar muestras de 5to EGB',
@@ -116,7 +116,7 @@ class ApiTest extends CrmTestCase
         $this->postJson('/api/v1/visitas', [
             'institucion_id' => $a->id,
             'docente_id' => $docenteDeB->id,
-            'fecha_visita' => now()->subHour()->toIso8601String(),
+            'fecha_visita' => now()->toIso8601String(),
             'nivel_interes' => 'medio',
             'estado_adopcion' => 'prospecto',
         ])->assertUnprocessable()->assertJsonValidationErrors('docente_id');

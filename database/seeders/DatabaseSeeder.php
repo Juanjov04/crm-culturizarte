@@ -31,5 +31,6 @@ class DatabaseSeeder extends Seeder
         $asesor->syncRoles(['Asesor']);
 
         $this->call(DirectorioDemoSeeder::class);
+        $this->call(CatalogoDemoSeeder::class);
     }
 }

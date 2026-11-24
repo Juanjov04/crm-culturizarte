@@ -44,6 +44,14 @@
                         <p class="mt-1 font-mono text-sm text-gray-700">{{ $visita->latitud }}, {{ $visita->longitud }}</p>
                     </div>
                 @endif
+                <div>
+                    <h3 class="text-sm font-semibold uppercase text-gray-500">Muestras entregadas</h3>
+                    @forelse ($visita->muestrasEntregadas as $muestra)
+                        <p class="mt-1 text-gray-900">{{ $muestra->cantidad }} × {{ $muestra->producto->titulo }} <span class="text-sm text-gray-500">({{ $muestra->formato_texto }})</span></p>
+                    @empty
+                        <p class="mt-1 text-gray-900">No se entregaron muestras.</p>
+                    @endforelse
+                </div>
                 <p class="text-xs text-gray-400">ID de sincronización: {{ $visita->uuid_offline }}</p>
             </div>
         </div>

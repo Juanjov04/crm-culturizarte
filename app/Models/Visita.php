@@ -12,6 +12,9 @@ class Visita extends Model
 
     public const ESTADOS_ADOPCION = ['prospecto', 'interesado', 'adoptado', 'desertado'];
 
+    /** Minutos de margen hacia atrás para la fecha de la visita (tiempo de llenado). */
+    public const MARGEN_FECHA_MINUTOS = 15;
+
     protected $guarded = [];
 
     protected function casts(): array

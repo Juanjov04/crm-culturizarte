@@ -23,6 +23,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<InicioPage>();
 		builder.Services.AddTransient<VisitaFormPage>();
 		builder.Services.AddTransient<VisitasPage>();
+		builder.Services.AddTransient<InventarioPage>();
 
 		// Quita el subrayado nativo de Android en los campos de texto:
 		// en el diseño del prototipo cada campo ya va dentro de su propia caja.

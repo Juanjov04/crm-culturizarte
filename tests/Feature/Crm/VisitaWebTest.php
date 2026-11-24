@@ -22,7 +22,6 @@ class VisitaWebTest extends CrmTestCase
             ->post(route('visitas.store'), [
                 'institucion_id' => $institucion->id,
                 'docente_id' => $docente->id,
-                'fecha_visita' => now()->subMinutes(30)->format('Y-m-d\TH:i'),
                 'nivel_interes' => 'medio',
                 'estado_adopcion' => 'prospecto',
                 'observaciones' => 'Pidió catálogo digital',

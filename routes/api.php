@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\InstitucionController;
+use App\Http\Controllers\Api\InventarioController;
 use App\Http\Controllers\Api\VisitaController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,5 +28,8 @@ Route::prefix('v1')->group(function () {
         Route::get('visitas', [VisitaController::class, 'index'])->name('api.visitas.index');
         Route::post('visitas', [VisitaController::class, 'store'])->name('api.visitas.store');
         Route::get('visitas/{visita}', [VisitaController::class, 'show'])->name('api.visitas.show');
+
+        // Sprint 5: inventario de muestras del asesor (CU-M03).
+        Route::get('inventario', [InventarioController::class, 'index'])->name('api.inventario.index');
     });
 });

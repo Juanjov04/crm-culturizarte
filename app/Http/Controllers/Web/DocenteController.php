@@ -59,6 +59,21 @@ class DocenteController extends Controller
             ->with('status', "Docente {$docente->nombre_completo} registrado correctamente.");
     }
 
+    /**
+     * Sprint 5 (RF-03): ficha del docente con el historial de muestras entregadas.
+     */
+    public function show(Docente $docente): View
+    {
+        $docente->load('institucion');
+
+        $muestras = $docente->muestrasEntregadas()
+            ->with(['producto', 'visita.user:id,name'])
+            ->latest('visitas.fecha_visita')
+            ->get();
+
+        return view('docentes.show', compact('docente', 'muestras'));
+    }
+
     public function edit(Docente $docente): View
     {
         return view('docentes.edit', [

@@ -56,9 +56,11 @@ public class Visita
     [JsonPropertyName("observaciones")] public string? Observaciones { get; set; }
     [JsonPropertyName("institucion")] public Institucion? Institucion { get; set; }
     [JsonPropertyName("docente")] public Docente? Docente { get; set; }
+    [JsonPropertyName("total_muestras")] public int? TotalMuestras { get; set; }
 
     public string Titulo => Institucion?.Nombre ?? "Institución";
-    public string Detalle => $"{Docente?.NombreCompleto} · Interés {NivelInteres} · {EstadoAdopcion}";
+    public string Detalle => $"{Docente?.NombreCompleto} · Interés {NivelInteres} · {EstadoAdopcion}"
+        + (TotalMuestras > 0 ? $" · {TotalMuestras} muestra(s)" : "");
     public string FechaTexto => FechaVisita.ToLocalTime().ToString("dd/MM/yyyy HH:mm");
 }
 
@@ -66,6 +68,48 @@ public class Paginado<T>
 {
     [JsonPropertyName("data")] public List<T> Data { get; set; } = new();
     [JsonPropertyName("total")] public int Total { get; set; }
+}
+
+/// <summary>Texto escolar del catálogo con el stock del asesor (Sprint 5, CU-M03).</summary>
+public class Producto
+{
+    [JsonPropertyName("id")] public int Id { get; set; }
+    [JsonPropertyName("codigo_isbn")] public string CodigoIsbn { get; set; } = "";
+    [JsonPropertyName("titulo")] public string Titulo { get; set; } = "";
+    [JsonPropertyName("serie")] public string Serie { get; set; } = "";
+    [JsonPropertyName("area")] public string Area { get; set; } = "";
+    [JsonPropertyName("nivel_educativo")] public string NivelEducativo { get; set; } = "";
+    [JsonPropertyName("stock_asesor")] public int StockAsesor { get; set; }
+    [JsonPropertyName("stock_bodega")] public int StockBodega { get; set; }
+
+    public string Detalle => $"{Serie} · {NivelEducativo} · {Area}";
+    public string StockTexto => StockAsesor == 1 ? "1 unidad" : $"{StockAsesor} unidades";
+    public string BodegaTexto => $"Bodega: {StockBodega}";
+    public bool SinStock => StockAsesor == 0;
+    public string Descripcion => $"{Titulo} (stock: {StockAsesor})";
+
+    /// <summary>RF-03: mismo criterio del servidor (sin mayúsculas, tildes ni espacios extra).</summary>
+    public bool EsCompatibleCon(Docente docente) => Normalizar(Area) == Normalizar(docente.AreaAsignatura);
+
+    public static string Normalizar(string? texto)
+    {
+        if (string.IsNullOrWhiteSpace(texto)) return "";
+        var sinTildes = new string(texto.Normalize(System.Text.NormalizationForm.FormD)
+            .Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark)
+            .ToArray());
+        return string.Join(' ', sinTildes.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries));
+    }
+}
+
+/// <summary>Muestra entregada al docente en la visita (RF-03).</summary>
+public class NuevaMuestra
+{
+    [JsonPropertyName("producto_id")] public int ProductoId { get; set; }
+    [JsonPropertyName("formato")] public string Formato { get; set; } = "fisica";
+    [JsonPropertyName("cantidad")] public int Cantidad { get; set; } = 1;
+
+    [JsonIgnore] public string Titulo { get; set; } = "";
+    [JsonIgnore] public string Resumen => $"{Cantidad} × {Titulo} ({(Formato == "digital" ? "digital" : "física")})";
 }
 
 /// <summary>Datos que envía el formulario de visita (RF-01).</summary>
@@ -81,4 +125,5 @@ public class NuevaVisita
     [JsonPropertyName("observaciones")] public string? Observaciones { get; set; }
     [JsonPropertyName("latitud")] public double? Latitud { get; set; }
     [JsonPropertyName("longitud")] public double? Longitud { get; set; }
+    [JsonPropertyName("muestras")] public List<NuevaMuestra> Muestras { get; set; } = new();
 }

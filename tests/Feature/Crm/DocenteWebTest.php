@@ -18,12 +18,12 @@ class DocenteWebTest extends CrmTestCase
                 'institucion_id' => $institucion->id,
                 'nombres' => 'Luis',
                 'apellidos' => 'Torres',
-                'cedula' => '1712345678',
+                'cedula' => '1710034065',
                 'area_asignatura' => 'Matemática',
             ])
             ->assertRedirect(route('instituciones.show', $institucion));
 
-        $this->assertDatabaseHas('docentes', ['cedula' => '1712345678', 'institucion_id' => $institucion->id]);
+        $this->assertDatabaseHas('docentes', ['cedula' => '1710034065', 'institucion_id' => $institucion->id]);
     }
 
     public function test_no_permite_asignar_docente_a_institucion_inactiva(): void

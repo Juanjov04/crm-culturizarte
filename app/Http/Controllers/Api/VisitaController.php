@@ -23,6 +23,7 @@ class VisitaController extends Controller
     public function index(Request $request): JsonResponse
     {
         $visitas = Visita::with(['institucion:id,nombre,codigo_amie', 'docente:id,nombres,apellidos,area_asignatura'])
+            ->withSum('muestrasEntregadas as total_muestras', 'cantidad')
             ->where('user_id', $request->user()->id)
             ->latest('fecha_visita')
             ->paginate(min((int) $request->query('por_pagina', 20), 100));
@@ -37,7 +38,7 @@ class VisitaController extends Controller
     {
         [$visita, $creada] = $registrar($request->user(), $request->validated(), 'movil');
 
-        $visita->load(['institucion:id,nombre,codigo_amie', 'docente:id,nombres,apellidos,area_asignatura']);
+        $visita->load(['institucion:id,nombre,codigo_amie', 'docente:id,nombres,apellidos,area_asignatura', 'muestrasEntregadas.producto:id,codigo_isbn,titulo']);
 
         return $creada
             ? $this->successResponse($visita, 'Visita registrada correctamente.', 201)
@@ -50,7 +51,7 @@ class VisitaController extends Controller
             return $this->errorResponse('No tiene acceso a esta visita.', 403);
         }
 
-        $visita->load(['institucion', 'docente']);
+        $visita->load(['institucion', 'docente', 'muestrasEntregadas.producto:id,codigo_isbn,titulo']);
 
         return $this->successResponse($visita);
     }

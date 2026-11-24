@@ -6,6 +6,8 @@ use App\Actions\RegistrarVisita;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VisitaRequest;
 use App\Models\Institucion;
+use App\Models\InventarioAsesor;
+use App\Models\Producto;
 use App\Models\User;
 use App\Models\Visita;
 use Illuminate\Http\RedirectResponse;
@@ -44,14 +46,25 @@ class VisitaController extends Controller
         return view('visitas.index', compact('visitas', 'asesores', 'instituciones', 'filtros'));
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
         $instituciones = Institucion::activas()
             ->with(['docentes' => fn ($q) => $q->orderBy('apellidos')->select('id', 'institucion_id', 'nombres', 'apellidos', 'area_asignatura')])
             ->orderBy('nombre')
             ->get(['id', 'nombre', 'codigo_amie']);
 
-        return view('visitas.create', compact('instituciones'));
+        // Sprint 5 (RF-03): catálogo con el stock personal del asesor para el paso de muestras.
+        $stock = InventarioAsesor::where('user_id', $request->user()->id)->pluck('cantidad', 'producto_id');
+        $productos = Producto::activos()->orderBy('titulo')->get(['id', 'codigo_isbn', 'titulo', 'serie', 'area', 'nivel_educativo'])
+            ->map(fn ($p) => [
+                'id' => $p->id,
+                'titulo' => $p->titulo,
+                'detalle' => "{$p->serie} · {$p->nivel_educativo} · {$p->codigo_isbn}",
+                'area' => Producto::normalizarArea($p->area),
+                'stock' => (int) ($stock[$p->id] ?? 0),
+            ]);
+
+        return view('visitas.create', compact('instituciones', 'productos'));
     }
 
     public function store(VisitaRequest $request, RegistrarVisita $registrar): RedirectResponse
@@ -70,7 +83,7 @@ class VisitaController extends Controller
             403
         );
 
-        $visita->load(['user', 'institucion', 'docente']);
+        $visita->load(['user', 'institucion', 'docente', 'muestrasEntregadas.producto']);
 
         return view('visitas.show', compact('visita'));
     }

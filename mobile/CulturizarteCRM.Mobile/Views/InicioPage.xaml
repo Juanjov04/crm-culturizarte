@@ -109,6 +109,25 @@
                         <Label Grid.Column="2" Text="›" FontSize="26" TextColor="#94A3B8" VerticalOptions="Center" />
                     </Grid>
                 </Border>
+
+                <!-- Sprint 5 (CU-M03): consultar inventario disponible -->
+                <Border Style="{StaticResource Tarjeta}" Padding="16">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnInventarioClicked" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                        <Border WidthRequest="44" HeightRequest="44" StrokeShape="RoundRectangle 12"
+                                BackgroundColor="{StaticResource ExitoFondo}" StrokeThickness="0">
+                            <Label Text="▤" FontSize="22" TextColor="{StaticResource Exito}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                            <Label Text="Mi inventario" FontSize="15" FontAttributes="Bold" TextColor="{StaticResource TextoFuerte}" />
+                            <Label Text="Muestras disponibles y stock en bodega" FontSize="12" TextColor="{StaticResource TextoSuave}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" FontSize="26" TextColor="#94A3B8" VerticalOptions="Center" />
+                    </Grid>
+                </Border>
             </VerticalStackLayout>
         </ScrollView>
     </Grid>

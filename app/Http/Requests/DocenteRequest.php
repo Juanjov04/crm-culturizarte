@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\CedulaEcuatoriana;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,8 +27,9 @@ class DocenteRequest extends FormRequest
             ],
             'nombres' => ['required', 'string', 'max:100'],
             'apellidos' => ['required', 'string', 'max:100'],
+            // Observación del jurado: la cédula debe ser ecuatoriana válida.
             'cedula' => [
-                'nullable', 'digits:10',
+                'nullable', 'digits:10', new CedulaEcuatoriana,
                 Rule::unique('docentes', 'cedula')->ignore($docente?->id),
             ],
             'email' => ['nullable', 'email', 'max:255'],

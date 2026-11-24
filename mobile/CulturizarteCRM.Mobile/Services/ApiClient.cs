@@ -88,6 +88,10 @@ public class ApiClient
     public async Task<List<Visita>> GetMisVisitasAsync()
         => (await EnviarAsync<Paginado<Visita>>(HttpMethod.Get, "visitas?por_pagina=50", null)).Data;
 
+    /// <summary>Sprint 5 (CU-M03): catálogo con el stock personal del asesor.</summary>
+    public Task<List<Producto>> GetInventarioAsync()
+        => EnviarAsync<List<Producto>>(HttpMethod.Get, "inventario", null);
+
     public Task<Visita> RegistrarVisitaAsync(NuevaVisita visita)
         => EnviarAsync<Visita>(HttpMethod.Post, "visitas", visita);
 

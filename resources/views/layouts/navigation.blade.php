@@ -75,6 +75,9 @@
             <x-sidebar-link icon="users" :href="route('docentes.index')" :active="request()->routeIs('docentes.*')">
                 Docentes
             </x-sidebar-link>
+            <x-sidebar-link icon="book" :href="route('productos.index')" :active="request()->routeIs('productos.*')">
+                Catálogo de textos
+            </x-sidebar-link>
         @endrole
 
         @hasanyrole('Administrador|Asesor')
@@ -83,6 +86,9 @@
             @endrole
             <x-sidebar-link icon="clipboard" :href="route('visitas.index')" :active="request()->routeIs('visitas.*')">
                 {{ $esAdmin ? 'Auditoría de Visitas' : 'Mis visitas' }}
+            </x-sidebar-link>
+            <x-sidebar-link icon="box" :href="route('inventario.index')" :active="request()->routeIs('inventario.*')">
+                {{ $esAdmin ? 'Inventario de muestras' : 'Mi inventario' }}
             </x-sidebar-link>
         @endhasanyrole
     </nav>

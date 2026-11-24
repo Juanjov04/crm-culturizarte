@@ -37,6 +37,11 @@ class User extends Authenticatable
         return $this->hasMany(Visita::class);
     }
 
+    public function inventario(): HasMany
+    {
+        return $this->hasMany(InventarioAsesor::class);
+    }
+
     public function esAdministrador(): bool
     {
         return $this->hasRole('Administrador');

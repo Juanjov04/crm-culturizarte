@@ -26,13 +26,21 @@
 
     <div>
         <x-input-label for="cedula" value="Cédula" />
-        <x-text-input id="cedula" name="cedula" class="mt-1 block w-full" maxlength="10" inputmode="numeric" :value="old('cedula', $docente->cedula)" />
+        <x-text-input id="cedula" name="cedula" class="mt-1 block w-full" maxlength="10" inputmode="numeric" pattern="[0-9]{10}"
+            title="Cédula ecuatoriana de 10 dígitos" :value="old('cedula', $docente->cedula)" />
+        <p class="mt-1 text-xs text-slate-500">Cédula ecuatoriana de 10 dígitos; se valida el dígito verificador.</p>
         <x-input-error :messages="$errors->get('cedula')" class="mt-2" />
     </div>
 
     <div>
         <x-input-label for="area_asignatura" value="Área / asignatura *" />
-        <x-text-input id="area_asignatura" name="area_asignatura" class="mt-1 block w-full" placeholder="Ej. Lengua y Literatura" :value="old('area_asignatura', $docente->area_asignatura)" required />
+        <x-text-input id="area_asignatura" name="area_asignatura" class="mt-1 block w-full" list="areas-catalogo" placeholder="Ej. Lengua y Literatura" :value="old('area_asignatura', $docente->area_asignatura)" required />
+        {{-- Sugiere las áreas del catálogo para que las muestras sean compatibles (RF-03). --}}
+        <datalist id="areas-catalogo">
+            @foreach (\App\Models\Producto::query()->distinct()->orderBy('area')->pluck('area') as $area)
+                <option value="{{ $area }}"></option>
+            @endforeach
+        </datalist>
         <x-input-error :messages="$errors->get('area_asignatura')" class="mt-2" />
     </div>
 

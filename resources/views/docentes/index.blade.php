@@ -37,7 +37,7 @@
                     <tbody class="divide-y divide-slate-100">
                         @forelse ($docentes as $docente)
                             <tr>
-                                <td class="px-5 py-3.5 font-medium text-gray-900">{{ $docente->nombre_completo }}</td>
+                                <td class="px-5 py-3.5 font-medium"><a href="{{ route('docentes.show', $docente) }}" class="text-indigo-600 hover:underline">{{ $docente->nombre_completo }}</a></td>
                                 <td class="px-5 py-3.5">{{ $docente->cedula ?: '—' }}</td>
                                 <td class="px-5 py-3.5">{{ $docente->area_asignatura }}</td>
                                 <td class="px-5 py-3.5">
