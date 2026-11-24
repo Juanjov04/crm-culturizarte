@@ -103,12 +103,12 @@ class ObservacionesJuradoTest extends CrmTestCase
         $this->assertDatabaseMissing('docentes', ['cedula' => '1712345678']);
     }
 
-    public function test_catalogo_tiene_las_24_provincias_y_221_cantones(): void
+    public function test_catalogo_tiene_las_24_provincias_y_223_cantones(): void
     {
         $provincias = Ecuador::provincias();
 
         $this->assertCount(24, $provincias);
-        $this->assertSame(221, array_sum(array_map('count', $provincias)));
+        $this->assertSame(223, array_sum(array_map('count', $provincias)));
         $this->assertContains('Quito', Ecuador::cantones('Pichincha'));
     }
 
