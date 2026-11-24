@@ -3,6 +3,7 @@ name: Pipeline CI/CD CRM Culturizarte
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   pruebas-y-migraciones:
