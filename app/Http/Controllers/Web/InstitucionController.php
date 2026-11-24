@@ -18,6 +18,7 @@ class InstitucionController extends Controller
     {
         $buscar = trim((string) $request->query('buscar'));
         $estado = $request->query('estado');
+        $provincia = $request->query('provincia');
 
         $instituciones = Institucion::query()
             ->withCount('docentes')
@@ -28,13 +29,14 @@ class InstitucionController extends Controller
                         ->orWhere('ciudad', 'like', "%{$buscar}%");
                 });
             })
+            ->when($provincia, fn ($q) => $q->where('provincia', $provincia))
             ->when($estado === 'activas', fn ($q) => $q->where('activo', true))
             ->when($estado === 'inactivas', fn ($q) => $q->where('activo', false))
             ->orderBy('nombre')
             ->paginate(10)
             ->withQueryString();
 
-        return view('instituciones.index', compact('instituciones', 'buscar', 'estado'));
+        return view('instituciones.index', compact('instituciones', 'buscar', 'estado', 'provincia'));
     }
 
     public function create(): View

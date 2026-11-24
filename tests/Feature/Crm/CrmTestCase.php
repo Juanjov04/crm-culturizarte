@@ -37,6 +37,7 @@ abstract class CrmTestCase extends TestCase
             'codigo_amie' => '17H'.str_pad((string) $n, 5, '0', STR_PAD_LEFT),
             'nombre' => "Unidad Educativa {$n}",
             'tipo' => 'Particular',
+            'provincia' => 'Pichincha',
             'ciudad' => 'Quito',
             'direccion' => 'Av. Siempre Viva 123',
             'activo' => true,

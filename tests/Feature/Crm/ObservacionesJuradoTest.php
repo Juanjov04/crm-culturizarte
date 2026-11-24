@@ -2,12 +2,15 @@
 
 namespace Tests\Feature\Crm;
 
+use App\Models\Institucion;
 use App\Models\Visita;
 use App\Rules\CedulaEcuatoriana;
+use App\Support\Ecuador;
 use Laravel\Sanctum\Sanctum;
 
 /**
- * Correcciones pedidas por el jurado: fecha de la visita y cédula del docente.
+ * Correcciones pedidas por el jurado: fecha de la visita, cédula del docente
+ * y provincia/ciudad de la institución elegidas de una lista.
  */
 class ObservacionesJuradoTest extends CrmTestCase
 {
@@ -98,5 +101,72 @@ class ObservacionesJuradoTest extends CrmTestCase
             ->assertSessionHasErrors('cedula');
 
         $this->assertDatabaseMissing('docentes', ['cedula' => '1712345678']);
+    }
+
+    public function test_catalogo_tiene_las_24_provincias_y_221_cantones(): void
+    {
+        $provincias = Ecuador::provincias();
+
+        $this->assertCount(24, $provincias);
+        $this->assertSame(221, array_sum(array_map('count', $provincias)));
+        $this->assertContains('Quito', Ecuador::cantones('Pichincha'));
+    }
+
+    public function test_corrige_ciudades_escritas_a_mano(): void
+    {
+        $this->assertSame(['Pichincha', 'Quito'], Ecuador::buscarCiudad('  QUITO '));
+        $this->assertSame(['Morona Santiago', 'Morona (Macas)'], Ecuador::buscarCiudad('macas'));
+        $this->assertNull(Ecuador::buscarCiudad('Quitoo'));
+    }
+
+    private function datosInstitucion(array $extra): array
+    {
+        return $extra + [
+            'codigo_amie' => '17H07777',
+            'nombre' => 'Unidad Educativa Prueba',
+            'tipo' => 'Fiscal',
+            'direccion' => 'Calle 1',
+            'activo' => '1',
+        ];
+    }
+
+    public function test_institucion_guarda_provincia_y_ciudad_de_la_lista(): void
+    {
+        $this->actingAs($this->usuarioConRol('Administrador'))
+            ->post(route('instituciones.store'), $this->datosInstitucion(['provincia' => 'Azuay', 'ciudad' => 'Cuenca']))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('institucions', ['codigo_amie' => '17H07777', 'provincia' => 'Azuay', 'ciudad' => 'Cuenca']);
+    }
+
+    public function test_rechaza_ciudad_mal_escrita_o_de_otra_provincia(): void
+    {
+        $admin = $this->usuarioConRol('Administrador');
+
+        foreach ([
+            ['provincia' => 'Pichincha', 'ciudad' => 'Quitoo'],
+            ['provincia' => 'Pichincha', 'ciudad' => 'quito'],
+            ['provincia' => 'Guayas', 'ciudad' => 'Quito'],
+        ] as $datos) {
+            $this->actingAs($admin)
+                ->post(route('instituciones.store'), $this->datosInstitucion($datos))
+                ->assertSessionHasErrors('ciudad');
+        }
+
+        $this->actingAs($admin)
+            ->post(route('instituciones.store'), $this->datosInstitucion(['provincia' => 'Pichinchaa', 'ciudad' => 'Quito']))
+            ->assertSessionHasErrors('provincia');
+
+        $this->assertSame(0, Institucion::count());
+    }
+
+    public function test_formulario_de_institucion_usa_menus(): void
+    {
+        $this->actingAs($this->usuarioConRol('Administrador'))
+            ->get(route('instituciones.create'))
+            ->assertOk()
+            ->assertSee('<select id="provincia"', false)
+            ->assertSee('<select id="ciudad"', false)
+            ->assertSee('Zamora Chinchipe');
     }
 }

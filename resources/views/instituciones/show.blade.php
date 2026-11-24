@@ -3,7 +3,7 @@
         <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
                 <h2 class="text-xl font-bold text-slate-900">{{ $institucion->nombre }}</h2>
-                <p class="text-sm text-gray-500">AMIE {{ $institucion->codigo_amie }} · {{ $institucion->tipo }} · {{ $institucion->ciudad }}</p>
+                <p class="text-sm text-gray-500">AMIE {{ $institucion->codigo_amie }} · {{ $institucion->tipo }} · {{ $institucion->ciudad }}{{ $institucion->provincia ? ', '.$institucion->provincia : '' }}</p>
             </div>
             <div class="flex items-center gap-3">
                 <x-estado-badge :activo="$institucion->activo" />

@@ -24,10 +24,35 @@
         <x-input-error :messages="$errors->get('nombre')" class="mt-2" />
     </div>
 
-    <div>
-        <x-input-label for="ciudad" value="Ciudad *" />
-        <x-text-input id="ciudad" name="ciudad" class="mt-1 block w-full" :value="old('ciudad', $institucion->ciudad)" required />
-        <x-input-error :messages="$errors->get('ciudad')" class="mt-2" />
+    {{-- Observación del jurado: provincia y ciudad se eligen de un menú (sin escribir). --}}
+    <div class="grid grid-cols-1 gap-5 sm:col-span-2 sm:grid-cols-2"
+        x-data="{
+            provincias: @js(\App\Support\Ecuador::provincias()),
+            provincia: @js(old('provincia', $institucion->provincia)),
+            ciudad: @js(old('ciudad', $institucion->ciudad)),
+            get ciudades() { return this.provincias[this.provincia] ?? []; },
+        }">
+        <div>
+            <x-input-label for="provincia" value="Provincia *" />
+            <select id="provincia" name="provincia" x-model="provincia" @change="ciudad = ''" class="mt-1 block w-full" required>
+                <option value="">Seleccione la provincia</option>
+                <template x-for="p in Object.keys(provincias)" :key="p">
+                    <option :value="p" x-text="p" :selected="p === provincia"></option>
+                </template>
+            </select>
+            <x-input-error :messages="$errors->get('provincia')" class="mt-2" />
+        </div>
+
+        <div>
+            <x-input-label for="ciudad" value="Ciudad (cantón) *" />
+            <select id="ciudad" name="ciudad" x-model="ciudad" :disabled="!provincia" class="mt-1 block w-full disabled:bg-gray-100" required>
+                <option value="" x-text="provincia ? 'Seleccione la ciudad' : 'Primero elija la provincia'"></option>
+                <template x-for="c in ciudades" :key="c">
+                    <option :value="c" x-text="c" :selected="c === ciudad"></option>
+                </template>
+            </select>
+            <x-input-error :messages="$errors->get('ciudad')" class="mt-2" />
+        </div>
     </div>
 
     <div>

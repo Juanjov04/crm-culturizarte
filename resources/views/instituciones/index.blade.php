@@ -14,6 +14,12 @@
 
             <form method="GET" class="card mb-5 flex flex-wrap items-center gap-3 p-4">
                 <x-text-input name="buscar" value="{{ $buscar }}" placeholder="Buscar por nombre, AMIE o ciudad" class="w-full sm:w-80" />
+                <select name="provincia">
+                    <option value="">Todas las provincias</option>
+                    @foreach (array_keys(\App\Support\Ecuador::provincias()) as $p)
+                        <option value="{{ $p }}" @selected($provincia === $p)>{{ $p }}</option>
+                    @endforeach
+                </select>
                 <select name="estado">
                     <option value="">Todas</option>
                     <option value="activas" @selected($estado === 'activas')>Activas</option>
@@ -43,7 +49,7 @@
                                     <a href="{{ route('instituciones.show', $institucion) }}" class="font-medium text-indigo-600 hover:underline">{{ $institucion->nombre }}</a>
                                 </td>
                                 <td class="px-5 py-3.5">{{ $institucion->tipo }}</td>
-                                <td class="px-5 py-3.5">{{ $institucion->ciudad }}</td>
+                                <td class="px-5 py-3.5">{{ $institucion->ciudad }}<span class="block text-xs text-slate-400">{{ $institucion->provincia }}</span></td>
                                 <td class="px-5 py-3.5 text-center">{{ $institucion->docentes_count }}</td>
                                 <td class="px-5 py-3.5"><x-estado-badge :activo="$institucion->activo" /></td>
                                 <td class="px-5 py-3.5 text-right whitespace-nowrap">

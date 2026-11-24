@@ -38,6 +38,7 @@ class InstitucionWebTest extends CrmTestCase
                 'codigo_amie' => '17h09999',
                 'nombre' => 'Unidad Educativa Nueva',
                 'tipo' => 'Fiscal',
+                'provincia' => 'Pichincha',
                 'ciudad' => 'Quito',
                 'direccion' => 'Calle 1',
                 'activo' => '1',
@@ -57,6 +58,7 @@ class InstitucionWebTest extends CrmTestCase
                 'codigo_amie' => '17H00001',
                 'nombre' => 'Otra',
                 'tipo' => 'Particular',
+                'provincia' => 'Pichincha',
                 'ciudad' => 'Quito',
                 'direccion' => 'Calle 2',
             ])
@@ -75,6 +77,7 @@ class InstitucionWebTest extends CrmTestCase
                 'codigo_amie' => $institucion->codigo_amie,
                 'nombre' => 'Nombre actualizado',
                 'tipo' => 'Particular',
+                'provincia' => 'Pichincha',
                 'ciudad' => 'Quito',
                 'direccion' => 'Calle 3',
                 'activo' => '0',
