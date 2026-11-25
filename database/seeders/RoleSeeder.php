@@ -12,5 +12,7 @@ class RoleSeeder extends Seeder
         // firstOrCreate permite ejecutar el seeder varias veces sin error.
         Role::firstOrCreate(['name' => 'Administrador', 'guard_name' => 'web']);
         Role::firstOrCreate(['name' => 'Asesor', 'guard_name' => 'web']);
+        // Sprint 7 (RF-04): Gerente Comercial, consulta indicadores y visitas sin administrar el directorio.
+        Role::firstOrCreate(['name' => 'Gerente', 'guard_name' => 'web']);
     }
 }

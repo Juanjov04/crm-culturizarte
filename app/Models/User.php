@@ -46,4 +46,13 @@ class User extends Authenticatable
     {
         return $this->hasRole('Administrador');
     }
+
+    /**
+     * Administrador y Gerente ven la gestión de todos los asesores (RF-04);
+     * el asesor solo la suya.
+     */
+    public function veTodo(): bool
+    {
+        return $this->hasAnyRole(['Administrador', 'Gerente']);
+    }
 }

@@ -1,6 +1,7 @@
 @php
     $user = Auth::user();
     $esAdmin = $user->hasRole('Administrador');
+    $veTodo = $user->veTodo();
     $iniciales = collect(explode(' ', $user->name))->filter()->take(2)->map(fn ($p) => mb_strtoupper(mb_substr($p, 0, 1)))->implode('');
 @endphp
 
@@ -18,11 +19,11 @@
 
         <div class="flex items-center gap-3">
             <span class="hidden items-center gap-2 rounded-full border border-slate-200 bg-slate-50 p-1 text-xs font-semibold md:flex">
-                <span @class(['flex items-center gap-1.5 rounded-full px-3 py-1', 'bg-slate-900 text-white' => ! $esAdmin, 'text-slate-500' => $esAdmin])>
+                <span @class(['flex items-center gap-1.5 rounded-full px-3 py-1', 'bg-slate-900 text-white' => ! $veTodo, 'text-slate-500' => $veTodo])>
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>
                     Asesor
                 </span>
-                <span @class(['flex items-center gap-1.5 rounded-full px-3 py-1', 'bg-slate-900 text-white' => $esAdmin, 'text-slate-500' => ! $esAdmin])>
+                <span @class(['flex items-center gap-1.5 rounded-full px-3 py-1', 'bg-slate-900 text-white' => $veTodo, 'text-slate-500' => ! $veTodo])>
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg>
                     Gerencia (Web)
                 </span>
@@ -58,13 +59,13 @@
             <x-application-logo class="h-9" />
         </span>
         <span class="mt-3 block text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
-            {{ $esAdmin ? 'Panel administrativo' : 'Panel del asesor' }}
+            {{ $esAdmin ? 'Panel administrativo' : ($veTodo ? 'Panel de gerencia' : 'Panel del asesor') }}
         </span>
     </a>
 
     <nav class="space-y-1.5">
         <x-sidebar-link icon="dashboard" :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-            {{ $esAdmin ? 'Dashboard' : 'Inicio' }}
+            {{ $veTodo ? 'Dashboard' : 'Inicio' }}
         </x-sidebar-link>
 
         @role('Administrador')
@@ -80,16 +81,22 @@
             </x-sidebar-link>
         @endrole
 
-        @hasanyrole('Administrador|Asesor')
-            @role('Administrador')
+        @hasanyrole('Administrador|Asesor|Gerente')
+            @if ($veTodo)
                 <p class="px-4 pb-1 pt-4 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">Gestión comercial</p>
-            @endrole
+                {{-- Sprint 7 (RF-04, CU-W02): panel de indicadores para gerencia --}}
+                <x-sidebar-link icon="chart" :href="route('indicadores.index')" :active="request()->routeIs('indicadores.*')">
+                    Indicadores (BI)
+                </x-sidebar-link>
+            @endif
             <x-sidebar-link icon="clipboard" :href="route('visitas.index')" :active="request()->routeIs('visitas.*')">
-                {{ $esAdmin ? 'Auditoría de Visitas' : 'Mis visitas' }}
+                {{ $veTodo ? 'Auditoría de Visitas' : 'Mis visitas' }}
             </x-sidebar-link>
+            @hasanyrole('Administrador|Asesor')
             <x-sidebar-link icon="box" :href="route('inventario.index')" :active="request()->routeIs('inventario.*')">
                 {{ $esAdmin ? 'Inventario de muestras' : 'Mi inventario' }}
             </x-sidebar-link>
+            @endhasanyrole
         @endhasanyrole
     </nav>
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\DocenteController;
+use App\Http\Controllers\Web\IndicadoresController;
 use App\Http\Controllers\Web\InstitucionController;
 use App\Http\Controllers\Web\InventarioController;
 use App\Http\Controllers\Web\ProductoController;
@@ -33,12 +34,26 @@ Route::middleware(['auth', 'verified', 'role:Administrador'])->group(function ()
     Route::post('inventario/asignaciones', [InventarioController::class, 'store'])->name('inventario.store');
 });
 
-// Sprint 4: visitas comerciales (administrador audita todas, asesor ve las suyas).
+// Sprint 7 (RF-04): indicadores, solo Gerente y Administrador.
+Route::middleware(['auth', 'verified', 'role:Administrador|Gerente'])->prefix('indicadores')->name('indicadores.')->group(function () {
+    Route::get('/', [IndicadoresController::class, 'index'])->name('index');
+    Route::get('imprimir', [IndicadoresController::class, 'imprimir'])->name('imprimir');
+    Route::get('exportar/{tipo}', [IndicadoresController::class, 'exportar'])
+        ->whereIn('tipo', ['visitas', 'colegios', 'muestras'])
+        ->name('exportar');
+});
+
 Route::middleware(['auth', 'verified', 'role:Administrador|Asesor'])->group(function () {
-    Route::resource('visitas', VisitaController::class)->only(['index', 'create', 'store', 'show']);
+    Route::resource('visitas', VisitaController::class)->only(['create', 'store']);
 
     // Sprint 5: inventario de muestras (el asesor ve el suyo; el administrador, el de todos).
     Route::get('inventario', [InventarioController::class, 'index'])->name('inventario.index');
+});
+
+// Va después del registro de visitas para que "visitas/create" no se tome como {visita}.
+// Sprint 4: visitas comerciales (administrador y gerente auditan todas, asesor ve las suyas).
+Route::middleware(['auth', 'verified', 'role:Administrador|Asesor|Gerente'])->group(function () {
+    Route::resource('visitas', VisitaController::class)->only(['index', 'show']);
 });
 
 require __DIR__.'/auth.php';

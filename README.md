@@ -7,6 +7,18 @@ CRM para la gestión comercial de Culturizarte: instituciones educativas, docent
 - **Portal web** (Laravel): administración, autenticación con Sanctum y roles.
 - **App móvil** (`mobile/`, .NET MAUI): registro de visitas comerciales y entrega de muestras desde el campo, y consulta del inventario del asesor.
 
+## Roles
+
+- **Administrador:** directorio B2B, catálogo, asignación de muestras, auditoría de visitas e indicadores.
+- **Gerente:** panel de indicadores (BI) y auditoría de visitas, sin administrar el directorio.
+- **Asesor:** registra visitas y entrega muestras (web y app móvil, también sin conexión).
+
+Usuarios de demostración (`php artisan migrate --seed`, contraseña `password`): `admin@culturizarte.test`, `gerente@culturizarte.test`, `asesor@culturizarte.test`.
+
+## Indicadores y Power BI
+
+El panel **Indicadores (BI)** muestra visitas, tasa de adopción, churn rate, muestras por serie y la comparativa anual, con filtros por fechas, provincia, asesor y serie. Se exporta a PDF (vista de impresión) y a CSV (visitas, estado por colegio y muestras), que se abre en Excel y se importa en Power BI con *Obtener datos → Texto/CSV*.
+
 ## Puesta en marcha (portal web)
 
 ```bash

@@ -30,6 +30,12 @@ class DatabaseSeeder extends Seeder
         );
         $asesor->syncRoles(['Asesor']);
 
+        $gerente = User::firstOrCreate(
+            ['email' => 'gerente@culturizarte.test'],
+            ['name' => 'Gerente Comercial Demo', 'password' => 'password', 'email_verified_at' => now()]
+        );
+        $gerente->syncRoles(['Gerente']);
+
         $this->call(DirectorioDemoSeeder::class);
         $this->call(CatalogoDemoSeeder::class);
     }

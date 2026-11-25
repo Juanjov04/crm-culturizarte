@@ -47,7 +47,7 @@ class VisitaController extends Controller
 
     public function show(Request $request, Visita $visita): JsonResponse
     {
-        if ($visita->user_id !== $request->user()->id && ! $request->user()->esAdministrador()) {
+        if ($visita->user_id !== $request->user()->id && ! $request->user()->veTodo()) {
             return $this->errorResponse('No tiene acceso a esta visita.', 403);
         }
 

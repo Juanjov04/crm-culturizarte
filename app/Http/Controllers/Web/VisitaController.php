@@ -27,8 +27,8 @@ class VisitaController extends Controller
 
         $visitas = Visita::query()
             ->with(['user:id,name', 'institucion:id,nombre', 'docente:id,nombres,apellidos'])
-            ->when(! $user->esAdministrador(), fn ($q) => $q->where('user_id', $user->id))
-            ->when($user->esAdministrador() && ! empty($filtros['asesor_id']), fn ($q) => $q->where('user_id', $filtros['asesor_id']))
+            ->when(! $user->veTodo(), fn ($q) => $q->where('user_id', $user->id))
+            ->when($user->veTodo() && ! empty($filtros['asesor_id']), fn ($q) => $q->where('user_id', $filtros['asesor_id']))
             ->when(! empty($filtros['institucion_id']), fn ($q) => $q->where('institucion_id', $filtros['institucion_id']))
             ->when(! empty($filtros['nivel_interes']), fn ($q) => $q->where('nivel_interes', $filtros['nivel_interes']))
             ->when(! empty($filtros['desde']), fn ($q) => $q->whereDate('fecha_visita', '>=', $filtros['desde']))
@@ -37,7 +37,7 @@ class VisitaController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        $asesores = $user->esAdministrador()
+        $asesores = $user->veTodo()
             ? User::role(['Asesor', 'Administrador'])->orderBy('name')->get(['id', 'name'])
             : collect();
 
@@ -79,7 +79,7 @@ class VisitaController extends Controller
     public function show(Request $request, Visita $visita): View
     {
         abort_unless(
-            $visita->user_id === $request->user()->id || $request->user()->esAdministrador(),
+            $visita->user_id === $request->user()->id || $request->user()->veTodo(),
             403
         );
 

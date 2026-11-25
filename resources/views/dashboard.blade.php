@@ -1,5 +1,5 @@
 @php
-    $esAdmin = Auth::user()->esAdministrador();
+    $esAdmin = Auth::user()->veTodo();
     $interes = [
         'alto' => 'bg-green-50 text-green-700 ring-green-200',
         'medio' => 'bg-amber-50 text-amber-700 ring-amber-200',
@@ -18,6 +18,9 @@
         :title="$esAdmin ? 'Panel de Gestión Comercial' : '¡Hola, '.Auth::user()->name.'!'"
         :subtitle="$esAdmin ? 'Monitoreo del directorio B2B y de las visitas registradas por los asesores.' : 'Resumen de tus visitas comerciales a colegios y docentes.'">
         <x-slot name="actions">
+            @hasanyrole('Administrador|Gerente')
+                <a href="{{ route('indicadores.index') }}" class="btn-secondary">Indicadores (BI)</a>
+            @endhasanyrole
             <span class="pill border border-slate-200 bg-white py-1.5 text-slate-600">
                 <span class="h-2 w-2 rounded-full bg-green-500"></span> Servidor activo
             </span>
@@ -30,9 +33,9 @@
         </x-slot>
     </x-page-header>
 
-    @if (! Auth::user()->hasAnyRole(['Administrador', 'Asesor']))
+    @if (! Auth::user()->hasAnyRole(['Administrador', 'Asesor', 'Gerente']))
         <div class="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            Tu usuario aún no tiene un rol asignado. Pide al administrador que te asigne el rol de Asesor o Administrador.
+            Tu usuario aún no tiene un rol asignado. Pide al administrador que te asigne el rol de Asesor, Gerente o Administrador.
         </div>
     @endif
 
@@ -57,7 +60,7 @@
                 <h2 class="font-bold text-slate-900">Últimas {{ $ultimasVisitas->count() ?: '' }} visitas registradas</h2>
                 <p class="text-xs text-slate-500">{{ $esAdmin ? 'Visitas enviadas por los asesores desde la app móvil y el panel web.' : 'Tus visitas más recientes.' }}</p>
             </div>
-            @hasanyrole('Administrador|Asesor')
+            @hasanyrole('Administrador|Asesor|Gerente')
                 <a href="{{ route('visitas.index') }}" class="text-sm font-semibold text-brand-600 hover:underline">Ver todas</a>
             @endhasanyrole
         </div>

@@ -14,7 +14,7 @@ class DashboardController extends Controller
     public function __invoke(Request $request): View
     {
         $user = $request->user();
-        $visitas = Visita::query()->when(! $user->esAdministrador(), fn ($q) => $q->where('user_id', $user->id));
+        $visitas = Visita::query()->when(! $user->veTodo(), fn ($q) => $q->where('user_id', $user->id));
 
         $resumen = [
             'instituciones_activas' => Institucion::activas()->count(),

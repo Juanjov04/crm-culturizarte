@@ -6,7 +6,7 @@
     <x-slot name="header">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <h2 class="text-xl font-bold text-slate-900">
-                {{ Auth::user()->esAdministrador() ? 'Visitas de los asesores' : 'Mis visitas' }}
+                {{ Auth::user()->veTodo() ? 'Visitas de los asesores' : 'Mis visitas' }}
             </h2>
             <a href="{{ route('visitas.create') }}" class="btn-primary">
                 + Registrar visita
