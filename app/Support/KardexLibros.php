@@ -40,8 +40,11 @@ class KardexLibros
             [$serie, $area] = ['Otros', $base];
         }
 
-        // Sin grado reconocible se conserva el nombre original (p. ej. "Educación Artística 1").
-        $titulo = $nivel === null ? self::tituloLegible($clave) : "{$base} {$nivel}";
+        // Se conserva el nombre original cuando no trae el grado (p. ej. "Educación Artística 1",
+        // que es de 1.º de Bachillerato) o cuando no se reconoce el grado.
+        $titulo = $nivel === null || ! preg_match('/\d+\s*(?:RO|DO|ER|TO|MO|VO|NO)|PREPARATORIA|BACH|SUBNIVEL/', $clave)
+            ? self::tituloLegible($clave)
+            : "{$base} {$nivel}";
 
         return [
             'codigo_isbn' => $codigo,
@@ -57,6 +60,14 @@ class KardexLibros
     /** Grado o subnivel educativo según la nomenclatura del Mineduc. */
     public static function nivel(string $clave): ?string
     {
+        // Textos cuyo nombre no indica el grado; confirmado con la editorial.
+        $conocidos = [
+            'EDUCACION ARTISTICA 1' => '1.º Bachillerato',
+        ];
+        if (isset($conocidos[$clave])) {
+            return $conocidos[$clave];
+        }
+
         if (str_contains($clave, 'PREPARATORIA')) {
             return '1.º EGB (Preparatoria)';
         }

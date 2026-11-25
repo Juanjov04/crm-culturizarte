@@ -56,6 +56,12 @@ class ImportarCatalogoTest extends CrmTestCase
             KardexLibros::interpretar('33', 'QUIMICA', null, 10), array_flip(['serie', 'area'])
         )));
 
+        // Texto sin grado en el nombre, confirmado por la editorial como de 1.º de Bachillerato.
+        $artistica = KardexLibros::interpretar('6', 'EDUCACION ARTISTICA 1', 'SEGUNDA EDICION', 12);
+        $this->assertSame('Educación Artística 1', $artistica['titulo']);
+        $this->assertSame('1.º Bachillerato', $artistica['nivel_educativo']);
+        $this->assertSame('Segunda edición', $artistica['edicion']);
+
         // Filas de total o notas al pie no son textos.
         $this->assertNull(KardexLibros::interpretar(null, null, 'TOTAL', 999));
         $this->assertNull(KardexLibros::interpretar(null, 'Excel Mily: Kardex libros', null, null));
