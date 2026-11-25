@@ -52,6 +52,11 @@
                         <p class="mt-1 text-gray-900">No se entregaron muestras.</p>
                     @endforelse
                 </div>
+                @if ($visita->capturada_offline)
+                    <p class="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                        Registrada sin conexión en el teléfono y sincronizada el {{ $visita->sincronizada_en?->format('d/m/Y H:i') ?? '—' }}.
+                    </p>
+                @endif
                 <p class="text-xs text-gray-400">ID de sincronización: {{ $visita->uuid_offline }}</p>
             </div>
         </div>

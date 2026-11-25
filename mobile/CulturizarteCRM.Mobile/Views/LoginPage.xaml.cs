@@ -4,12 +4,16 @@ namespace CulturizarteCRM.Mobile.Views;
 
 public partial class LoginPage : ContentPage
 {
-    private readonly ApiClient _api;
+    private const string ClaveDuenoDatos = "datos_locales_usuario";
 
-    public LoginPage(ApiClient api)
+    private readonly ApiClient _api;
+    private readonly SincronizacionService _sync;
+
+    public LoginPage(ApiClient api, SincronizacionService sync)
     {
         InitializeComponent();
         _api = api;
+        _sync = sync;
         UrlEntry.Text = _api.UrlBase;
     }
 
@@ -46,7 +50,16 @@ public partial class LoginPage : ContentPage
 
         try
         {
-            await _api.LoginAsync(email, password);
+            var usuario = await _api.LoginAsync(email, password);
+
+            // Los datos del teléfono pertenecen a un asesor: si entra otro, se borran
+            // para que sus visitas pendientes no se envíen con la cuenta equivocada.
+            if (Preferences.Get(ClaveDuenoDatos, usuario.Id) != usuario.Id)
+            {
+                await _sync.BorrarDatosLocalesAsync();
+            }
+            Preferences.Set(ClaveDuenoDatos, usuario.Id);
+
             PasswordEntry.Text = "";
             ErrorLabel.IsVisible = false;
             await Shell.Current.GoToAsync("//inicio");

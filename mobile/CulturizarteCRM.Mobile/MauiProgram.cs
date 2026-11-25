@@ -19,6 +19,9 @@ public static class MauiProgram
 
 		// Servicios y pantallas (inyección de dependencias).
 		builder.Services.AddSingleton<ApiClient>();
+		// Sprint 6: base local SQLite y sincronización offline-first.
+		builder.Services.AddSingleton<BaseLocal>();
+		builder.Services.AddSingleton<SincronizacionService>();
 		builder.Services.AddTransient<LoginPage>();
 		builder.Services.AddTransient<InicioPage>();
 		builder.Services.AddTransient<VisitaFormPage>();

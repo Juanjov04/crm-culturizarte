@@ -73,6 +73,33 @@
                     </VerticalStackLayout>
                 </Border>
 
+                <!-- Sprint 6 (RF-02): visitas guardadas en el teléfono pendientes de enviar -->
+                <Border Style="{StaticResource Tarjeta}" Padding="18">
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                <Label Text="Visitas pendientes de sincronizar" FontSize="14" FontAttributes="Bold"
+                                       TextColor="{StaticResource TextoFuerte}" />
+                                <Label x:Name="UltimaSyncLabel" Text="Aún no se ha sincronizado." FontSize="12"
+                                       TextColor="{StaticResource TextoSuave}" />
+                            </VerticalStackLayout>
+                            <Border x:Name="PendientesBadge" Grid.Column="1" WidthRequest="52" HeightRequest="52"
+                                    StrokeShape="RoundRectangle 26" StrokeThickness="0" BackgroundColor="{StaticResource ExitoFondo}">
+                                <Label x:Name="PendientesLabel" Text="0" FontSize="20" FontAttributes="Bold"
+                                       TextColor="{StaticResource Exito}" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                        </Grid>
+                        <Label x:Name="SyncErrorLabel" FontSize="12" TextColor="{StaticResource Tertiary}" IsVisible="False" />
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <ActivityIndicator x:Name="SyncIndicador" IsRunning="False" IsVisible="False"
+                                               Color="{StaticResource Primary}" WidthRequest="24" />
+                            <Button x:Name="SincronizarButton" Grid.Column="1" Text="⟳  Sincronizar ahora"
+                                    Clicked="OnSincronizarClicked" HeightRequest="46"
+                                    BackgroundColor="{StaticResource Navy}" TextColor="White" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
                 <!-- Accesos rápidos -->
                 <Border Style="{StaticResource Tarjeta}" Padding="16">
                     <Border.GestureRecognizers>

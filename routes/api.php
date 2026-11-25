@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\InstitucionController;
 use App\Http\Controllers\Api\InventarioController;
+use App\Http\Controllers\Api\SincronizacionController;
 use App\Http\Controllers\Api\VisitaController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,5 +32,10 @@ Route::prefix('v1')->group(function () {
 
         // Sprint 5: inventario de muestras del asesor (CU-M03).
         Route::get('inventario', [InventarioController::class, 'index'])->name('api.inventario.index');
+
+        // Sprint 6: envío por lotes de las visitas guardadas sin conexión (RF-02).
+        Route::post('sincronizacion', [SincronizacionController::class, 'store'])
+            ->middleware('throttle:30,1')
+            ->name('api.sincronizacion');
     });
 });

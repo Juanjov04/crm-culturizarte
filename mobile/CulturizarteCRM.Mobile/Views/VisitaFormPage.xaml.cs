@@ -7,8 +7,8 @@ namespace CulturizarteCRM.Mobile.Views;
 /// <summary>
 /// Sprint 4 - Formulario de registro de visitas comerciales (RF-01, CU-M02).
 /// Sprint 5 - Paso de asignación de muestras con control de stock (RF-03).
-/// Por ahora envía la visita directamente a la API; el guardado offline en
-/// SQLite y la sincronización se agregan en el Sprint 6.
+/// Sprint 6 - Offline-first (RF-01): la visita se guarda primero en el teléfono
+/// (SQLite) y se envía al servidor cuando hay conexión.
 /// </summary>
 public partial class VisitaFormPage : ContentPage
 {
@@ -16,16 +16,16 @@ public partial class VisitaFormPage : ContentPage
     private static readonly string[] Estados = ["prospecto", "interesado", "adoptado", "desertado"];
     private static readonly string[] Formatos = ["fisica", "digital"];
 
-    private readonly ApiClient _api;
+    private readonly SincronizacionService _sync;
     private readonly ObservableCollection<NuevaMuestra> _muestras = new();
     private List<Producto> _productos = new();
     private IDispatcherTimer? _reloj;
     private bool _cargado;
 
-    public VisitaFormPage(ApiClient api)
+    public VisitaFormPage(SincronizacionService sync)
     {
         InitializeComponent();
-        _api = api;
+        _sync = sync;
 
         InteresPicker.ItemsSource = Niveles.Select(Capitalizar).ToList();
         InteresPicker.SelectedIndex = 1;
@@ -57,18 +57,19 @@ public partial class VisitaFormPage : ContentPage
             return;
         }
 
+        // Se usa el catálogo guardado en el teléfono: funciona sin conexión (CU-M01).
         Ocupado(true);
         try
         {
-            var instituciones = _api.GetInstitucionesAsync();
-            var inventario = _api.GetInventarioAsync();
-            InstitucionPicker.ItemsSource = await instituciones;
-            _productos = await inventario;
-            _cargado = true;
-        }
-        catch (ApiException ex)
-        {
-            MostrarError(ex.Message);
+            var instituciones = await _sync.GetInstitucionesAsync();
+            _productos = await _sync.GetInventarioAsync();
+            InstitucionPicker.ItemsSource = instituciones;
+            _cargado = instituciones.Count > 0;
+
+            if (instituciones.Count == 0)
+            {
+                MostrarError("Aún no hay colegios guardados en el teléfono. Conéctate a internet una vez para descargar el catálogo.");
+            }
         }
         finally
         {
@@ -203,14 +204,17 @@ public partial class VisitaFormPage : ContentPage
         Ocupado(true);
         try
         {
-            await _api.RegistrarVisitaAsync(visita);
+            await _sync.GuardarVisitaAsync(visita, institucion, docente);
             var detalle = _muestras.Count > 0 ? $" con {_muestras.Sum(m => m.Cantidad)} muestra(s)" : "";
-            await DisplayAlert("Visita registrada", $"Se registró la visita a {docente.NombreCompleto}{detalle}.", "Aceptar");
+            var envio = _sync.HayConexion
+                ? "Se está enviando al servidor."
+                : "Estás sin conexión: quedó guardada en el teléfono y se enviará sola cuando vuelvas a tener internet.";
+            await DisplayAlert("Visita registrada", $"Se registró la visita a {docente.NombreCompleto}{detalle}.\n\n{envio}", "Aceptar");
             await Shell.Current.GoToAsync("..");
         }
-        catch (ApiException ex)
+        catch (Exception ex)
         {
-            MostrarError(ex.Message);
+            MostrarError($"No se pudo guardar la visita en el teléfono: {ex.Message}");
         }
         finally
         {

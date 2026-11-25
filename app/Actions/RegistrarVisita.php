@@ -18,7 +18,7 @@ use Illuminate\Validation\ValidationException;
  *
  * Si el dispositivo envía un uuid_offline que ya existe para el mismo asesor,
  * devuelve la visita existente en lugar de duplicarla (y no vuelve a
- * descontar stock). Esto deja lista la base para la sincronización del Sprint 6.
+ * descontar stock). Así un reintento de la sincronización offline (Sprint 6) es seguro.
  */
 class RegistrarVisita
 {
@@ -55,6 +55,9 @@ class RegistrarVisita
                 'longitud' => $datos['longitud'] ?? null,
                 'origen' => $origen,
                 'estado_sincronizacion' => 'sincronizado',
+                // Sprint 6: visita capturada sin conexión y enviada después por la app.
+                'capturada_offline' => filter_var($datos['capturada_offline'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                'sincronizada_en' => now(),
             ]);
 
             $this->registrarMuestras($asesor, $visita, $datos['muestras'] ?? []);

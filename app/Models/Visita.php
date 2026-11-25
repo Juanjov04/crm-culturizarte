@@ -15,12 +15,17 @@ class Visita extends Model
     /** Minutos de margen hacia atrás para la fecha de la visita (tiempo de llenado). */
     public const MARGEN_FECHA_MINUTOS = 15;
 
+    /** Días que puede esperar una visita registrada sin conexión para sincronizarse (Sprint 6). */
+    public const DIAS_OFFLINE = 7;
+
     protected $guarded = [];
 
     protected function casts(): array
     {
         return [
             'fecha_visita' => 'datetime',
+            'sincronizada_en' => 'datetime',
+            'capturada_offline' => 'boolean',
             'latitud' => 'float',
             'longitud' => 'float',
         ];

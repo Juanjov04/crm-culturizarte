@@ -6,16 +6,17 @@ namespace CulturizarteCRM.Mobile.Views;
 /// <summary>
 /// Sprint 5 - Consultar inventario disponible (CU-M03): stock de muestras del
 /// asesor por texto escolar y stock referencial de bodega.
+/// Sprint 6: se lee del teléfono (última sincronización), así funciona sin conexión.
 /// </summary>
 public partial class InventarioPage : ContentPage
 {
-    private readonly ApiClient _api;
+    private readonly SincronizacionService _sync;
     private List<Producto> _productos = new();
 
-    public InventarioPage(ApiClient api)
+    public InventarioPage(SincronizacionService sync)
     {
         InitializeComponent();
-        _api = api;
+        _sync = sync;
     }
 
     protected override async void OnAppearing()
@@ -24,7 +25,12 @@ public partial class InventarioPage : ContentPage
         await CargarAsync();
     }
 
-    private async void OnRefrescar(object? sender, EventArgs e) => await CargarAsync();
+    private async void OnRefrescar(object? sender, EventArgs e)
+    {
+        // Deslizar hacia abajo envía las pendientes y descarga el inventario actualizado.
+        await _sync.SincronizarAsync();
+        await CargarAsync();
+    }
 
     private void OnBuscar(object? sender, TextChangedEventArgs e) => Filtrar();
 
@@ -33,16 +39,18 @@ public partial class InventarioPage : ContentPage
         try
         {
             // Primero los textos que el asesor tiene en su inventario.
-            _productos = (await _api.GetInventarioAsync())
+            _productos = (await _sync.GetInventarioAsync())
                 .OrderByDescending(p => p.StockAsesor > 0)
                 .ThenBy(p => p.Titulo)
                 .ToList();
-            VacioLabel.Text = "No hay textos que coincidan.";
+            VacioLabel.Text = _productos.Count == 0
+                ? "Aún no hay inventario guardado en el teléfono. Conéctate a internet para descargarlo."
+                : "No hay textos que coincidan.";
             Filtrar();
         }
-        catch (ApiException ex)
+        catch (Exception ex)
         {
-            VacioLabel.Text = ex.Message;
+            VacioLabel.Text = $"No se pudo leer el inventario del teléfono: {ex.Message}";
             ListaProductos.ItemsSource = null;
         }
         finally

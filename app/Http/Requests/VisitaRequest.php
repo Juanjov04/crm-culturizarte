@@ -21,8 +21,20 @@ class VisitaRequest extends FormRequest
 
     public function rules(): array
     {
+        return self::reglas($this->all());
+    }
+
+    /**
+     * Reglas compartidas por el formulario web, la API y la sincronización por
+     * lotes de la app (Sprint 6), que valida cada visita del paquete por separado.
+     */
+    public static function reglas(array $datos): array
+    {
+        $offline = filter_var($datos['capturada_offline'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
         return [
             'uuid_offline' => ['nullable', 'uuid'],
+            'capturada_offline' => ['sometimes', 'boolean'],
             'institucion_id' => [
                 'required', 'integer',
                 Rule::exists('institucions', 'id')->where('activo', true),
@@ -30,14 +42,19 @@ class VisitaRequest extends FormRequest
             // El docente es obligatorio y debe pertenecer a la institución seleccionada.
             'docente_id' => [
                 'required', 'integer',
-                Rule::exists('docentes', 'id')->where('institucion_id', (int) $this->input('institucion_id')),
+                Rule::exists('docentes', 'id')->where('institucion_id', (int) ($datos['institucion_id'] ?? 0)),
             ],
-            // Observación del jurado: la visita se registra con la fecha y hora actual.
-            // Si no se envía, el servidor usa la hora actual; si se envía, solo se
-            // aceptan unos minutos de margen por el llenado del formulario.
+            // Observación del jurado: la visita se registra con la fecha y hora actual
+            // (el asesor no puede editarla). Si no se envía, el servidor usa la hora
+            // actual; si se envía, solo hay unos minutos de margen por el llenado.
+            // Sprint 6 (RF-01/RF-02): una visita capturada sin conexión llega al
+            // sincronizar, así que conserva la hora del teléfono al registrarla y se
+            // acepta hasta DIAS_OFFLINE días después.
             'fecha_visita' => [
-                'nullable', 'date',
-                'after_or_equal:'.now()->subMinutes(Visita::MARGEN_FECHA_MINUTOS)->toDateTimeString(),
+                $offline ? 'required' : 'nullable', 'date',
+                'after_or_equal:'.($offline
+                    ? now()->subDays(Visita::DIAS_OFFLINE)
+                    : now()->subMinutes(Visita::MARGEN_FECHA_MINUTOS))->toDateTimeString(),
                 'before_or_equal:'.now()->addMinute()->toDateTimeString(),
             ],
             'nivel_interes' => ['required', Rule::in(Visita::NIVELES_INTERES)],
@@ -64,6 +81,7 @@ class VisitaRequest extends FormRequest
             'institucion_id.exists' => 'La institución no existe o está inactiva.',
             'docente_id.exists' => 'El docente seleccionado no pertenece a la institución.',
             'fecha_visita.after_or_equal' => 'La visita se registra con la fecha y hora actual; no se aceptan fechas ni horas anteriores.',
+            'fecha_visita.required' => 'La visita guardada sin conexión no tiene la fecha en que se registró.',
             'fecha_visita.before_or_equal' => 'La fecha de la visita no puede ser posterior a la fecha actual.',
             'muestras.*.producto_id.exists' => 'El texto seleccionado no existe o no está disponible.',
             'muestras.*.producto_id.distinct' => 'El mismo texto se agregó más de una vez.',

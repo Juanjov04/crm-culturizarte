@@ -92,8 +92,15 @@ public class ApiClient
     public Task<List<Producto>> GetInventarioAsync()
         => EnviarAsync<List<Producto>>(HttpMethod.Get, "inventario", null);
 
-    public Task<Visita> RegistrarVisitaAsync(NuevaVisita visita)
-        => EnviarAsync<Visita>(HttpMethod.Post, "visitas", visita);
+    /// <summary>
+    /// Sprint 6 (RF-02): envía en un solo paquete las visitas guardadas en el teléfono.
+    /// Cada elemento es el JSON de una visita tal como se guardó en SQLite.
+    /// </summary>
+    public Task<RespuestaSincronizacion> SincronizarAsync(List<string> visitasJson)
+        => EnviarAsync<RespuestaSincronizacion>(HttpMethod.Post, "sincronizacion", new
+        {
+            visitas = visitasJson.Select(j => JsonSerializer.Deserialize<JsonElement>(j)).ToList(),
+        });
 
     private async Task<T> EnviarAsync<T>(HttpMethod metodo, string ruta, object? cuerpo, bool conToken = true)
     {

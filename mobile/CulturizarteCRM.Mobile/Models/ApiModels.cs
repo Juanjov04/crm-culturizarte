@@ -130,4 +130,22 @@ public class NuevaVisita
     [JsonPropertyName("latitud")] public double? Latitud { get; set; }
     [JsonPropertyName("longitud")] public double? Longitud { get; set; }
     [JsonPropertyName("muestras")] public List<NuevaMuestra> Muestras { get; set; } = new();
+    /// <summary>Sprint 6: true si el teléfono no tenía internet al registrar la visita.</summary>
+    [JsonPropertyName("capturada_offline")] public bool CapturadaOffline { get; set; }
+}
+
+/// <summary>Respuesta de POST /sincronizacion (Sprint 6, RF-02).</summary>
+public class RespuestaSincronizacion
+{
+    [JsonPropertyName("resultados")] public List<ResultadoSincronizacion> Resultados { get; set; } = new();
+    [JsonPropertyName("sincronizadas")] public int Sincronizadas { get; set; }
+    [JsonPropertyName("rechazadas")] public int Rechazadas { get; set; }
+}
+
+public class ResultadoSincronizacion
+{
+    [JsonPropertyName("uuid_offline")] public string UuidOffline { get; set; } = "";
+    [JsonPropertyName("estado")] public string Estado { get; set; } = "";
+    [JsonPropertyName("visita_id")] public int? VisitaId { get; set; }
+    [JsonPropertyName("errores")] public List<string> Errores { get; set; } = new();
 }
