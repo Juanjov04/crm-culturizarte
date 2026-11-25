@@ -55,10 +55,10 @@ class VisitaController extends Controller
 
         // Sprint 5 (RF-03): catálogo con el stock personal del asesor para el paso de muestras.
         $stock = InventarioAsesor::where('user_id', $request->user()->id)->pluck('cantidad', 'producto_id');
-        $productos = Producto::activos()->orderBy('titulo')->get(['id', 'codigo_isbn', 'titulo', 'serie', 'area', 'nivel_educativo'])
+        $productos = Producto::activos()->orderBy('titulo')->get(['id', 'codigo_isbn', 'titulo', 'edicion', 'serie', 'area', 'nivel_educativo'])
             ->map(fn ($p) => [
                 'id' => $p->id,
-                'titulo' => $p->titulo,
+                'titulo' => $p->nombre_completo,
                 'detalle' => "{$p->serie} · {$p->nivel_educativo} · {$p->codigo_isbn}",
                 'area' => Producto::normalizarArea($p->area),
                 'stock' => (int) ($stock[$p->id] ?? 0),

@@ -47,7 +47,7 @@
                         @forelse ($muestras as $muestra)
                             <tr>
                                 <td class="px-5 py-3.5">{{ $muestra->visita->fecha_visita->format('d/m/Y H:i') }}</td>
-                                <td class="px-5 py-3.5 font-medium text-gray-900">{{ $muestra->producto->titulo }}</td>
+                                <td class="px-5 py-3.5 font-medium text-gray-900">{{ $muestra->producto->nombre_completo }}</td>
                                 <td class="px-5 py-3.5">{{ $muestra->formato_texto }}</td>
                                 <td class="px-5 py-3.5 text-center">{{ $muestra->cantidad }}</td>
                                 <td class="px-5 py-3.5">{{ $muestra->visita->user->name }}</td>

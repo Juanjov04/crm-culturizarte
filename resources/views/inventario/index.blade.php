@@ -31,7 +31,7 @@
                             <option value="">Seleccione</option>
                             @foreach ($productos as $producto)
                                 <option value="{{ $producto->id }}" @selected((string) old('producto_id') === (string) $producto->id) @disabled($producto->stock_actual === 0)>
-                                    {{ $producto->titulo }} ({{ $producto->codigo_isbn }}) — bodega: {{ $producto->stock_actual }}
+                                    {{ $producto->nombre_completo }} ({{ $producto->codigo_isbn }}) — bodega: {{ $producto->stock_actual }}
                                 </option>
                             @endforeach
                         </select>
@@ -73,7 +73,7 @@
                             @forelse ($inventario as $item)
                                 <tr>
                                     <td class="px-5 py-3.5">{{ $item->user->name }}</td>
-                                    <td class="px-5 py-3.5 font-medium text-gray-900">{{ $item->producto->titulo }}</td>
+                                    <td class="px-5 py-3.5 font-medium text-gray-900">{{ $item->producto->nombre_completo }}</td>
                                     <td class="px-5 py-3.5">{{ $item->producto->area }}</td>
                                     <td class="px-5 py-3.5 text-center font-semibold">{{ $item->cantidad }}</td>
                                 </tr>

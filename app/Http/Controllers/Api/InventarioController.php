@@ -29,6 +29,7 @@ class InventarioController extends Controller
             ->when($buscar !== '', fn ($q) => $q->where(function ($w) use ($buscar) {
                 $w->where('titulo', 'like', "%{$buscar}%")
                     ->orWhere('codigo_isbn', 'like', "%{$buscar}%")
+                    ->orWhere('edicion', 'like', "%{$buscar}%")
                     ->orWhere('area', 'like', "%{$buscar}%");
             }))
             ->orderBy('serie')
@@ -38,6 +39,7 @@ class InventarioController extends Controller
                 'id' => $p->id,
                 'codigo_isbn' => $p->codigo_isbn,
                 'titulo' => $p->titulo,
+                'edicion' => $p->edicion,
                 'serie' => $p->serie,
                 'area' => $p->area,
                 'nivel_educativo' => $p->nivel_educativo,

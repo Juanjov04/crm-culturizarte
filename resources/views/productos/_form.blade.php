@@ -24,6 +24,13 @@
         <x-input-error :messages="$errors->get('titulo')" class="mt-2" />
     </div>
 
+    <div class="sm:col-span-2">
+        <x-input-label for="edicion" value="Edición / observaciones" />
+        <x-text-input id="edicion" name="edicion" class="mt-1 block w-full" placeholder="Ej. Proyectos por competencias"
+            :value="old('edicion', $producto->edicion)" />
+        <x-input-error :messages="$errors->get('edicion')" class="mt-2" />
+    </div>
+
     <div>
         <x-input-label for="area" value="Área / asignatura compatible *" />
         <x-text-input id="area" name="area" class="mt-1 block w-full" list="areas-conocidas" placeholder="Ej. Lengua y Literatura"

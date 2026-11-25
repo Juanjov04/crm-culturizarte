@@ -34,6 +34,7 @@ class ProductoRequest extends FormRequest
                 Rule::unique('productos', 'codigo_isbn')->ignore($producto?->id),
             ],
             'titulo' => ['required', 'string', 'max:255'],
+            'edicion' => ['nullable', 'string', 'max:255'],
             'serie' => ['required', Rule::in(Producto::SERIES)],
             'area' => ['required', 'string', 'max:100'],
             'nivel_educativo' => ['required', 'string', 'max:100'],
@@ -55,6 +56,7 @@ class ProductoRequest extends FormRequest
         return [
             'codigo_isbn' => 'código SKU / ISBN',
             'titulo' => 'título',
+            'edicion' => 'edición',
             'area' => 'área / asignatura',
             'nivel_educativo' => 'grado / nivel',
             'stock_actual' => 'stock en bodega',

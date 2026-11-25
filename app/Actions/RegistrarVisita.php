@@ -84,7 +84,7 @@ class RegistrarVisita
             $cantidad = (int) $muestra['cantidad'];
 
             if (! $producto->esCompatibleCon($docente)) {
-                $errores["muestras.{$i}.producto_id"] = "«{$producto->titulo}» es del área {$producto->area} y no corresponde al área del docente ({$docente->area_asignatura}).";
+                $errores["muestras.{$i}.producto_id"] = "«{$producto->nombre_completo}» es del área {$producto->area} y no corresponde al área del docente ({$docente->area_asignatura}).";
 
                 continue;
             }
@@ -97,13 +97,13 @@ class RegistrarVisita
                 $disponible = $inventario?->cantidad ?? 0;
 
                 if ($disponible === 0) {
-                    $errores["muestras.{$i}.cantidad"] = "No tienes stock de «{$producto->titulo}» para entregar una muestra física.";
+                    $errores["muestras.{$i}.cantidad"] = "No tienes stock de «{$producto->nombre_completo}» para entregar una muestra física.";
 
                     continue;
                 }
 
                 if ($cantidad > $disponible) {
-                    $errores["muestras.{$i}.cantidad"] = "Solo tienes {$disponible} unidades de «{$producto->titulo}» en tu inventario.";
+                    $errores["muestras.{$i}.cantidad"] = "Solo tienes {$disponible} unidades de «{$producto->nombre_completo}» en tu inventario.";
 
                     continue;
                 }

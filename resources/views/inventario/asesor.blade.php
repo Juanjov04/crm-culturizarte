@@ -21,7 +21,7 @@
                     <tbody class="divide-y divide-slate-100">
                         @forelse ($inventario as $item)
                             <tr>
-                                <td class="px-5 py-3.5 font-medium text-gray-900">{{ $item->producto->titulo }}</td>
+                                <td class="px-5 py-3.5 font-medium text-gray-900">{{ $item->producto->titulo }}@if ($item->producto->edicion)<span class="block text-xs font-normal text-slate-500">{{ $item->producto->edicion }}</span>@endif</td>
                                 <td class="px-5 py-3.5">{{ $item->producto->serie }}</td>
                                 <td class="px-5 py-3.5">{{ $item->producto->area }}</td>
                                 <td class="px-5 py-3.5">{{ $item->producto->nivel_educativo }}</td>

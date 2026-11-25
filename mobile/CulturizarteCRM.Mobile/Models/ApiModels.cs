@@ -76,17 +76,21 @@ public class Producto
     [JsonPropertyName("id")] public int Id { get; set; }
     [JsonPropertyName("codigo_isbn")] public string CodigoIsbn { get; set; } = "";
     [JsonPropertyName("titulo")] public string Titulo { get; set; } = "";
+    [JsonPropertyName("edicion")] public string? Edicion { get; set; }
     [JsonPropertyName("serie")] public string Serie { get; set; } = "";
     [JsonPropertyName("area")] public string Area { get; set; } = "";
     [JsonPropertyName("nivel_educativo")] public string NivelEducativo { get; set; } = "";
     [JsonPropertyName("stock_asesor")] public int StockAsesor { get; set; }
     [JsonPropertyName("stock_bodega")] public int StockBodega { get; set; }
 
-    public string Detalle => $"{Serie} · {NivelEducativo} · {Area}";
+    public string Detalle => string.IsNullOrWhiteSpace(Edicion)
+        ? $"{Serie} · {NivelEducativo} · {Area}"
+        : $"{Edicion}\n{Serie} · {NivelEducativo} · {Area}";
+    public string NombreCompleto => string.IsNullOrWhiteSpace(Edicion) ? Titulo : $"{Titulo} — {Edicion}";
     public string StockTexto => StockAsesor == 1 ? "1 unidad" : $"{StockAsesor} unidades";
     public string BodegaTexto => $"Bodega: {StockBodega}";
     public bool SinStock => StockAsesor == 0;
-    public string Descripcion => $"{Titulo} (stock: {StockAsesor})";
+    public string Descripcion => $"{NombreCompleto} (stock: {StockAsesor})";
 
     /// <summary>RF-03: mismo criterio del servidor (sin mayúsculas, tildes ni espacios extra).</summary>
     public bool EsCompatibleCon(Docente docente) => Normalizar(Area) == Normalizar(docente.AreaAsignatura);

@@ -22,7 +22,7 @@ class AsignarStock
 
             if ($cantidad > $producto->stock_actual) {
                 throw ValidationException::withMessages([
-                    'cantidad' => "Stock insuficiente en bodega: solo hay {$producto->stock_actual} unidades de «{$producto->titulo}».",
+                    'cantidad' => "Stock insuficiente en bodega: solo hay {$producto->stock_actual} unidades de «{$producto->nombre_completo}».",
                 ]);
             }
 

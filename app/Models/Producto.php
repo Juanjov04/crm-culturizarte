@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
  */
 class Producto extends Model
 {
-    public const SERIES = ['ECA', 'Comprensión Lectora'];
+    public const SERIES = ['ECA', 'Comprensión Lectora', 'Otros'];
 
     protected $guarded = [];
 
@@ -24,6 +24,12 @@ class Producto extends Model
             'activo' => 'boolean',
             'stock_actual' => 'integer',
         ];
+    }
+
+    /** Título con la edición, para distinguir textos del mismo grado. */
+    public function getNombreCompletoAttribute(): string
+    {
+        return $this->edicion ? "{$this->titulo} — {$this->edicion}" : $this->titulo;
     }
 
     public function scopeActivos(Builder $query): Builder

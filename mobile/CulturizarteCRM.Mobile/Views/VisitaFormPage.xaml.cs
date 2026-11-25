@@ -154,7 +154,7 @@ public partial class VisitaFormPage : ContentPage
         _muestras.Add(new NuevaMuestra
         {
             ProductoId = producto.Id,
-            Titulo = producto.Titulo,
+            Titulo = producto.NombreCompleto,
             Formato = formato,
             Cantidad = cantidad,
         });

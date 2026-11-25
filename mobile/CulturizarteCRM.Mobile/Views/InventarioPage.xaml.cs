@@ -56,6 +56,6 @@ public partial class InventarioPage : ContentPage
         var texto = Producto.Normalizar(Buscador.Text);
         ListaProductos.ItemsSource = string.IsNullOrEmpty(texto)
             ? _productos
-            : _productos.Where(p => Producto.Normalizar($"{p.Titulo} {p.CodigoIsbn} {p.Area} {p.Serie}").Contains(texto)).ToList();
+            : _productos.Where(p => Producto.Normalizar($"{p.Titulo} {p.Edicion} {p.CodigoIsbn} {p.Area} {p.Serie}").Contains(texto)).ToList();
     }
 }

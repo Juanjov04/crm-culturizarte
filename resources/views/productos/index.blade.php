@@ -43,7 +43,7 @@
                         @forelse ($productos as $producto)
                             <tr>
                                 <td class="px-5 py-3.5 font-mono whitespace-nowrap">{{ $producto->codigo_isbn }}</td>
-                                <td class="px-5 py-3.5 font-medium text-gray-900">{{ $producto->titulo }}</td>
+                                <td class="px-5 py-3.5 font-medium text-gray-900">{{ $producto->titulo }}@if ($producto->edicion)<span class="block text-xs font-normal text-slate-500">{{ $producto->edicion }}</span>@endif</td>
                                 <td class="px-5 py-3.5">{{ $producto->serie }}</td>
                                 <td class="px-5 py-3.5">{{ $producto->area }}</td>
                                 <td class="px-5 py-3.5 whitespace-nowrap">{{ $producto->nivel_educativo }}</td>
