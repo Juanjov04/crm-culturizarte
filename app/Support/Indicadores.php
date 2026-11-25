@@ -5,6 +5,7 @@ namespace App\Support;
 use App\Models\Institucion;
 use App\Models\MuestraEntregada;
 use App\Models\Producto;
+use App\Models\User;
 use App\Models\Visita;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -86,23 +87,58 @@ class Indicadores
             ->when($this->serie, fn ($q) => $q->whereHas('producto', fn ($p) => $p->where('serie', $this->serie)));
     }
 
-    /**
-     * Último estado de adopción de cada colegio según sus visitas.
-     *
-     * @return Collection<int, object{institucion_id:int, estado:string, fecha:Carbon, user_id:int, visitas:int}>
-     */
-    private function ultimoEstadoPorColegio($consulta): Collection
+    // --- Datos en memoria (cada consulta a Supabase cuesta un viaje por internet) ---
+
+    private ?Collection $visitasCargadas = null;
+
+    private ?Collection $muestrasCargadas = null;
+
+    private ?Collection $colegiosCargados = null;
+
+    /** Todas las visitas hasta la fecha final, ordenadas; se consultan una sola vez. */
+    private function visitasHasta(): Collection
     {
-        return $consulta->orderBy('fecha_visita')->orderBy('id')
-            ->get(['id', 'institucion_id', 'user_id', 'fecha_visita', 'estado_adopcion'])
-            ->groupBy('institucion_id')
-            ->map(fn (Collection $visitas) => (object) [
-                'institucion_id' => $visitas->last()->institucion_id,
-                'estado' => $visitas->last()->estado_adopcion,
-                'fecha' => $visitas->last()->fecha_visita,
-                'user_id' => $visitas->last()->user_id,
-                'visitas' => $visitas->count(),
-                'alguna_vez_adopto' => $visitas->contains('estado_adopcion', 'adoptado'),
+        return $this->visitasCargadas ??= $this->visitasHastaFin()
+            ->orderBy('fecha_visita')->orderBy('id')
+            ->get(['id', 'institucion_id', 'user_id', 'fecha_visita', 'estado_adopcion']);
+    }
+
+    private function visitasPeriodo(): Collection
+    {
+        return $this->visitasHasta()->filter(fn ($v) => $v->fecha_visita->gte($this->desde))->values();
+    }
+
+    /** Muestras del período con su serie, asesor y colegio (una consulta más sus relaciones). */
+    private function muestras(): Collection
+    {
+        return $this->muestrasCargadas ??= $this->muestrasDelPeriodo()
+            ->with(['producto:id,serie', 'visita:id,user_id,institucion_id'])
+            ->get(['id', 'visita_id', 'producto_id', 'cantidad']);
+    }
+
+    /** Colegios que aparecen en las visitas cargadas. */
+    private function colegios(): Collection
+    {
+        return $this->colegiosCargados ??= Institucion::whereIn('id', $this->visitasHasta()->pluck('institucion_id')->unique())
+            ->get(['id', 'nombre', 'codigo_amie', 'provincia', 'ciudad', 'tipo'])
+            ->keyBy('id');
+    }
+
+    /**
+     * Último estado de adopción de cada colegio según sus visitas (ya ordenadas por fecha).
+     *
+     * @return Collection<int, object{institucion_id:int, estado:string, fecha:Carbon, user_id:int, visitas:int, alguna_vez_adopto:bool}>
+     */
+    private function ultimoEstadoPorColegio(Collection $visitas): Collection
+    {
+        return $visitas->groupBy('institucion_id')
+            ->map(fn (Collection $deColegio) => (object) [
+                'institucion_id' => $deColegio->last()->institucion_id,
+                'estado' => $deColegio->last()->estado_adopcion,
+                'fecha' => $deColegio->last()->fecha_visita,
+                'user_id' => $deColegio->last()->user_id,
+                'visitas' => $deColegio->count(),
+                'alguna_vez_adopto' => $deColegio->contains('estado_adopcion', 'adoptado'),
             ]);
     }
 
@@ -110,30 +146,26 @@ class Indicadores
 
     public function kpis(): array
     {
-        $estadosPeriodo = $this->ultimoEstadoPorColegio($this->visitasDelPeriodo());
+        $estadosPeriodo = $this->ultimoEstadoPorColegio($this->visitasPeriodo());
         $visitados = $estadosPeriodo->count();
         $adoptados = $estadosPeriodo->where('estado', 'adoptado')->count();
 
         return [
-            'visitas' => $this->visitasDelPeriodo()->count(),
+            'visitas' => $this->visitasPeriodo()->count(),
             'colegios_activos' => Institucion::activas()->when($this->provincia, fn ($q) => $q->where('provincia', $this->provincia))->count(),
             'colegios_visitados' => $visitados,
             'tasa_adopcion' => $visitados > 0 ? round($adoptados * 100 / $visitados, 1) : 0.0,
             'colegios_adoptados' => $adoptados,
             'churn_rate' => $this->churnRate(),
-            'muestras' => (int) $this->muestrasDelPeriodo()->sum('cantidad'),
+            'muestras' => (int) $this->muestras()->sum('cantidad'),
         ];
     }
 
     /** Churn rate (%): colegios que adoptaron y cuyo último estado es "desertado". */
     public function churnRate(?Carbon $hasta = null): float
     {
-        $consulta = $this->visitasHastaFin();
-        if ($hasta) {
-            $consulta->where('fecha_visita', '<=', $hasta);
-        }
-
-        $estados = $this->ultimoEstadoPorColegio($consulta)->where('alguna_vez_adopto', true);
+        $visitas = $hasta ? $this->visitasHasta()->filter(fn ($v) => $v->fecha_visita->lte($hasta)) : $this->visitasHasta();
+        $estados = $this->ultimoEstadoPorColegio($visitas)->where('alguna_vez_adopto', true);
         $desertados = $estados->where('estado', 'desertado')->count();
 
         return $estados->count() > 0 ? round($desertados * 100 / $estados->count(), 1) : 0.0;
@@ -144,8 +176,7 @@ class Indicadores
     /** Línea: visitas por mes del período. */
     public function visitasPorMes(): array
     {
-        $porMes = $this->visitasDelPeriodo()->get(['fecha_visita'])
-            ->countBy(fn ($v) => $v->fecha_visita->format('Y-m'));
+        $porMes = $this->visitasPeriodo()->countBy(fn ($v) => $v->fecha_visita->format('Y-m'));
 
         $meses = [];
         for ($mes = $this->desde->copy()->startOfMonth(); $mes <= $this->hasta; $mes->addMonth()) {
@@ -158,7 +189,7 @@ class Indicadores
     /** Pastel: colegios del período según su último estado. */
     public function estadosDeColegios(): array
     {
-        $conteo = $this->ultimoEstadoPorColegio($this->visitasDelPeriodo())->countBy('estado');
+        $conteo = $this->ultimoEstadoPorColegio($this->visitasPeriodo())->countBy('estado');
 
         return collect(Visita::ESTADOS_ADOPCION)
             ->mapWithKeys(fn ($e) => [ucfirst($e) => $conteo[$e] ?? 0])
@@ -168,10 +199,10 @@ class Indicadores
     /** Barras: colegios adoptados y desertados por provincia (zona). */
     public function adopcionesPorProvincia(): array
     {
-        $estados = $this->ultimoEstadoPorColegio($this->visitasDelPeriodo());
-        $provincias = Institucion::whereIn('id', $estados->keys())->pluck('provincia', 'id');
+        $colegios = $this->colegios();
 
-        return $estados->groupBy(fn ($e) => $provincias[$e->institucion_id] ?? 'Sin provincia')
+        return $this->ultimoEstadoPorColegio($this->visitasPeriodo())
+            ->groupBy(fn ($e) => $colegios[$e->institucion_id]->provincia ?? 'Sin provincia')
             ->map(fn ($grupo) => [
                 'adoptados' => $grupo->where('estado', 'adoptado')->count(),
                 'desertados' => $grupo->where('estado', 'desertado')->count(),
@@ -183,7 +214,7 @@ class Indicadores
     /** Barras: unidades de muestras entregadas por serie de libros. */
     public function muestrasPorSerie(): array
     {
-        $porSerie = $this->muestrasDelPeriodo()->with('producto:id,serie')->get(['producto_id', 'cantidad'])
+        $porSerie = $this->muestras()
             ->groupBy(fn ($m) => $m->producto->serie)
             ->map(fn ($g) => (int) $g->sum('cantidad'));
 
@@ -196,14 +227,7 @@ class Indicadores
      */
     public function comparativaAnual(): array
     {
-        $visitas = Visita::query()
-            ->when($this->asesorId, fn ($q) => $q->where('user_id', $this->asesorId))
-            ->when($this->provincia, fn ($q) => $q->whereHas('institucion', fn ($i) => $i->where('provincia', $this->provincia)))
-            ->where('fecha_visita', '<=', $this->hasta)
-            ->orderBy('fecha_visita')->orderBy('id')
-            ->get(['id', 'institucion_id', 'fecha_visita', 'estado_adopcion']);
-
-        return $visitas->groupBy(fn ($v) => $v->fecha_visita->year)
+        return $this->visitasHasta()->groupBy(fn ($v) => $v->fecha_visita->year)
             ->map(function (Collection $delAnio) {
                 $ultimos = $delAnio->groupBy('institucion_id')->map(fn ($v) => $v->last()->estado_adopcion);
 
@@ -216,14 +240,15 @@ class Indicadores
     /** Ranking de asesores del período: visitas, colegios y muestras. */
     public function rankingAsesores(): Collection
     {
-        $visitas = $this->visitasDelPeriodo()->with('user:id,name')->get(['id', 'user_id', 'institucion_id']);
-        $muestras = $this->muestrasDelPeriodo()->with('visita:id,user_id')->get(['visita_id', 'cantidad'])
+        $visitas = $this->visitasPeriodo();
+        $nombres = User::whereIn('id', $visitas->pluck('user_id')->unique())->pluck('name', 'id');
+        $muestras = $this->muestras()
             ->groupBy(fn ($m) => $m->visita->user_id)
             ->map(fn ($g) => (int) $g->sum('cantidad'));
 
         return $visitas->groupBy('user_id')
             ->map(fn ($g, $userId) => (object) [
-                'asesor' => $g->first()->user->name,
+                'asesor' => $nombres[$userId] ?? '—',
                 'visitas' => $g->count(),
                 'colegios' => $g->pluck('institucion_id')->unique()->count(),
                 'muestras' => $muestras[$userId] ?? 0,
@@ -239,10 +264,10 @@ class Indicadores
      */
     public function estadoPorColegio(): Collection
     {
-        $estados = $this->ultimoEstadoPorColegio($this->visitasDelPeriodo());
-        $colegios = Institucion::whereIn('id', $estados->keys())->get(['id', 'nombre', 'codigo_amie', 'provincia', 'ciudad', 'tipo'])->keyBy('id');
-        $asesores = \App\Models\User::whereIn('id', $estados->pluck('user_id'))->pluck('name', 'id');
-        $muestras = $this->muestrasDelPeriodo()->with('visita:id,institucion_id')->get(['visita_id', 'cantidad'])
+        $estados = $this->ultimoEstadoPorColegio($this->visitasPeriodo());
+        $colegios = $this->colegios();
+        $asesores = User::whereIn('id', $estados->pluck('user_id')->unique())->pluck('name', 'id');
+        $muestras = $this->muestras()
             ->groupBy(fn ($m) => $m->visita->institucion_id)
             ->map(fn ($g) => (int) $g->sum('cantidad'));
 

@@ -97,6 +97,14 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
+            // Rendimiento con Supabase (servidor remoto):
+            // - DB_PERSISTENT=true reutiliza la conexión entre peticiones (abrirla tarda casi 1 s).
+            // - DB_DISABLE_PREPARES=true envía cada consulta en un solo viaje en lugar de tres
+            //   (preparar, enlazar, ejecutar); los parámetros siguen yendo separados del SQL.
+            'options' => extension_loaded('pdo_pgsql') ? [
+                PDO::ATTR_PERSISTENT => (bool) env('DB_PERSISTENT', false),
+                PDO::PGSQL_ATTR_DISABLE_PREPARES => (bool) env('DB_DISABLE_PREPARES', false),
+            ] : [],
         ],
 
         'sqlsrv' => [
