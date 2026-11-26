@@ -14,7 +14,6 @@ public partial class LoginPage : ContentPage
         InitializeComponent();
         _api = api;
         _sync = sync;
-        UrlEntry.Text = _api.UrlBase;
     }
 
     protected override async void OnAppearing()
@@ -39,13 +38,7 @@ public partial class LoginPage : ContentPage
             return;
         }
 
-        if (!Uri.TryCreate(UrlEntry.Text?.Trim(), UriKind.Absolute, out _))
-        {
-            MostrarError("La URL del servidor no es válida.");
-            return;
-        }
-
-        _api.UrlBase = UrlEntry.Text!.Trim();
+        // La dirección del servidor no se muestra al asesor: se usa la configurada en ApiClient.
         Ocupado(true);
 
         try
