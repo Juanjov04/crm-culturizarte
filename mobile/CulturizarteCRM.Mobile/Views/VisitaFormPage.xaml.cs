@@ -16,10 +16,14 @@ public partial class VisitaFormPage : ContentPage
     private static readonly string[] Estados = ["prospecto", "interesado", "adoptado", "desertado"];
     private static readonly string[] Formatos = ["fisica", "digital"];
 
+    /// <summary>Igual que Visita::MAX_DIAS_FUTURO en el servidor.</summary>
+    private const int MaxDiasFuturo = 365;
+
     private readonly SincronizacionService _sync;
     private readonly ObservableCollection<NuevaMuestra> _muestras = new();
     private List<Producto> _productos = new();
-    private IDispatcherTimer? _reloj;
+    private bool _fechaEditada;
+    private bool _ajustandoFecha;
     private bool _cargado;
 
     public VisitaFormPage(SincronizacionService sync)
@@ -35,22 +39,18 @@ public partial class VisitaFormPage : ContentPage
         FormatoPicker.SelectedIndex = 0;
 
         BindableLayout.SetItemsSource(MuestrasLista, _muestras);
-        ActualizarFecha();
+        PonerFechaActual();
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
 
-        // La fecha y hora mostradas siguen al reloj del dispositivo (no se pueden editar).
-        if (_reloj is null)
+        // Mientras el asesor no cambie la fecha, se muestra la hora actual.
+        if (!_fechaEditada)
         {
-            _reloj = Dispatcher.CreateTimer();
-            _reloj.Interval = TimeSpan.FromSeconds(20);
-            _reloj.Tick += (_, _) => ActualizarFecha();
+            PonerFechaActual();
         }
-        ActualizarFecha();
-        _reloj.Start();
 
         if (_cargado)
         {
@@ -77,13 +77,45 @@ public partial class VisitaFormPage : ContentPage
         }
     }
 
-    protected override void OnDisappearing()
+    // --- Fecha y hora (observación del jurado: solo hacia adelante) ---
+
+    private void PonerFechaActual()
     {
-        base.OnDisappearing();
-        _reloj?.Stop();
+        _ajustandoFecha = true;
+        var ahora = DateTime.Now;
+        FechaPicker.MinimumDate = ahora.Date;
+        FechaPicker.MaximumDate = ahora.Date.AddDays(MaxDiasFuturo);
+        FechaPicker.Date = ahora.Date;
+        HoraPicker.Time = new TimeSpan(ahora.Hour, ahora.Minute, 0);
+        _ajustandoFecha = false;
     }
 
-    private void ActualizarFecha() => FechaLabel.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+    private DateTime FechaElegida => FechaPicker.Date.Date.Add(HoraPicker.Time);
+
+    private void OnFechaCambiada(object? sender, DateChangedEventArgs e) => MarcarFechaEditada();
+
+    private void OnHoraCambiada(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(TimePicker.Time))
+        {
+            MarcarFechaEditada();
+        }
+    }
+
+    private void MarcarFechaEditada()
+    {
+        if (_ajustandoFecha)
+        {
+            return;
+        }
+
+        _fechaEditada = true;
+        var anterior = FechaElegida < DateTime.Now.AddMinutes(-1);
+        FechaAyudaLabel.Text = anterior
+            ? "La fecha y hora no pueden ser anteriores a este momento."
+            : "Solo se permiten la fecha y hora actuales o posteriores.";
+        FechaAyudaLabel.TextColor = anterior ? Color.FromArgb("#B91C1C") : (Color)Application.Current!.Resources["TextoSuave"];
+    }
 
     private void OnInstitucionCambiada(object? sender, EventArgs e)
     {
@@ -188,12 +220,20 @@ public partial class VisitaFormPage : ContentPage
             return;
         }
 
+        // Si el asesor no tocó la fecha se usa la hora del registro; si la cambió,
+        // no puede quedar en el pasado (se permite 1 minuto por el llenado).
+        var fecha = _fechaEditada ? FechaElegida : DateTime.Now;
+        if (fecha < DateTime.Now.AddMinutes(-1))
+        {
+            MostrarError("La fecha y hora de la visita no pueden ser anteriores a este momento.");
+            return;
+        }
+
         var visita = new NuevaVisita
         {
             InstitucionId = institucion.Id,
             DocenteId = docente.Id,
-            // Observación del jurado: siempre la fecha y hora actual.
-            FechaVisita = DateTimeOffset.Now,
+            FechaVisita = new DateTimeOffset(fecha),
             NivelInteres = Niveles[Math.Max(InteresPicker.SelectedIndex, 0)],
             EstadoAdopcion = Estados[Math.Max(EstadoPicker.SelectedIndex, 0)],
             Acuerdos = Limpiar(AcuerdosEditor.Text),

@@ -91,19 +91,24 @@ class ApiTest extends CrmTestCase
         $this->assertSame($asesor->id, Visita::first()->user_id);
     }
 
-    public function test_rechaza_visita_con_fecha_futura(): void
+    public function test_acepta_fecha_futura_y_rechaza_mas_de_un_anio(): void
     {
         $institucion = $this->institucion();
         $docente = $this->docente($institucion);
         Sanctum::actingAs($this->usuarioConRol('Asesor'));
-
-        $this->postJson('/api/v1/visitas', [
+        $datos = [
             'institucion_id' => $institucion->id,
             'docente_id' => $docente->id,
-            'fecha_visita' => now()->addDay()->toIso8601String(),
             'nivel_interes' => 'medio',
             'estado_adopcion' => 'prospecto',
-        ])->assertUnprocessable()->assertJsonValidationErrors('fecha_visita');
+        ];
+
+        // En la app se puede elegir una fecha y hora hacia adelante.
+        $this->postJson('/api/v1/visitas', $datos + ['fecha_visita' => now()->addDays(3)->setTime(10, 30)->toIso8601String()])
+            ->assertCreated();
+
+        $this->postJson('/api/v1/visitas', $datos + ['fecha_visita' => now()->addDays(Visita::MAX_DIAS_FUTURO + 1)->toIso8601String()])
+            ->assertUnprocessable()->assertJsonValidationErrors('fecha_visita');
     }
 
     public function test_rechaza_docente_de_otra_institucion(): void

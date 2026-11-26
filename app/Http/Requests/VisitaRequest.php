@@ -44,18 +44,18 @@ class VisitaRequest extends FormRequest
                 'required', 'integer',
                 Rule::exists('docentes', 'id')->where('institucion_id', (int) ($datos['institucion_id'] ?? 0)),
             ],
-            // Observación del jurado: la visita se registra con la fecha y hora actual
-            // (el asesor no puede editarla). Si no se envía, el servidor usa la hora
-            // actual; si se envía, solo hay unos minutos de margen por el llenado.
+            // Observación del jurado: no se aceptan fechas ni horas anteriores al
+            // registro. En la app el asesor puede elegir una fecha y hora futuras
+            // (hasta MAX_DIAS_FUTURO días); en el panel web, sin fecha, se usa la
+            // hora actual. Hay unos minutos de margen por el llenado del formulario.
             // Sprint 6 (RF-01/RF-02): una visita capturada sin conexión llega al
-            // sincronizar, así que conserva la hora del teléfono al registrarla y se
-            // acepta hasta DIAS_OFFLINE días después.
+            // sincronizar, así que se acepta hasta DIAS_OFFLINE días después.
             'fecha_visita' => [
                 $offline ? 'required' : 'nullable', 'date',
                 'after_or_equal:'.($offline
                     ? now()->subDays(Visita::DIAS_OFFLINE)
                     : now()->subMinutes(Visita::MARGEN_FECHA_MINUTOS))->toDateTimeString(),
-                'before_or_equal:'.now()->addMinute()->toDateTimeString(),
+                'before_or_equal:'.now()->addDays(Visita::MAX_DIAS_FUTURO)->toDateTimeString(),
             ],
             'nivel_interes' => ['required', Rule::in(Visita::NIVELES_INTERES)],
             'estado_adopcion' => ['required', Rule::in(Visita::ESTADOS_ADOPCION)],
@@ -80,9 +80,9 @@ class VisitaRequest extends FormRequest
         return [
             'institucion_id.exists' => 'La institución no existe o está inactiva.',
             'docente_id.exists' => 'El docente seleccionado no pertenece a la institución.',
-            'fecha_visita.after_or_equal' => 'La visita se registra con la fecha y hora actual; no se aceptan fechas ni horas anteriores.',
+            'fecha_visita.after_or_equal' => 'La fecha y hora de la visita no pueden ser anteriores al momento del registro.',
             'fecha_visita.required' => 'La visita guardada sin conexión no tiene la fecha en que se registró.',
-            'fecha_visita.before_or_equal' => 'La fecha de la visita no puede ser posterior a la fecha actual.',
+            'fecha_visita.before_or_equal' => 'La fecha de la visita no puede ser más de un año en el futuro.',
             'muestras.*.producto_id.exists' => 'El texto seleccionado no existe o no está disponible.',
             'muestras.*.producto_id.distinct' => 'El mismo texto se agregó más de una vez.',
         ];

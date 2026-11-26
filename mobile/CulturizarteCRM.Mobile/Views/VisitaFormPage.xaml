@@ -50,12 +50,13 @@
                     <VerticalStackLayout Spacing="4">
                         <Label Text="PASO 2 · REGISTRO DE ACUERDOS" Style="{StaticResource Paso}" />
                         <!-- Observación del jurado: la visita se registra con la fecha y hora actual (no editable). -->
+                        <!-- Observación del jurado: se puede elegir fecha y hora, pero nunca anteriores al registro. -->
                         <Label Text="Fecha y hora" Style="{StaticResource Etiqueta}" />
-                        <Border BackgroundColor="{StaticResource Fondo}" Stroke="{StaticResource Borde}"
-                                StrokeShape="RoundRectangle 10" Padding="12,10">
-                            <Label x:Name="FechaLabel" FontSize="15" TextColor="{StaticResource TextoFuerte}" />
-                        </Border>
-                        <Label Text="Se registra automáticamente al guardar." FontSize="11" TextColor="{StaticResource TextoSuave}" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                            <DatePicker x:Name="FechaPicker" Format="dd/MM/yyyy" DateSelected="OnFechaCambiada" />
+                            <TimePicker x:Name="HoraPicker" Grid.Column="1" Format="HH:mm" PropertyChanged="OnHoraCambiada" />
+                        </Grid>
+                        <Label x:Name="FechaAyudaLabel" Text="Solo se permiten la fecha y hora actuales o posteriores." FontSize="11" TextColor="{StaticResource TextoSuave}" />
                         <Label Text="Nivel de interés" Style="{StaticResource Etiqueta}" />
                         <Picker x:Name="InteresPicker" Title="Nivel de interés" />
                         <Label Text="Estado del docente frente a la adopción" Style="{StaticResource Etiqueta}" />

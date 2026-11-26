@@ -111,7 +111,7 @@ class SincronizacionTest extends CrmTestCase
         $this->assertFalse(Visita::firstOrFail()->capturada_offline);
     }
 
-    public function test_rechaza_visitas_offline_demasiado_antiguas_o_futuras(): void
+    public function test_rechaza_visitas_offline_demasiado_antiguas_o_lejanas(): void
     {
         $institucion = $this->institucion();
         $docente = $this->docente($institucion);
@@ -119,7 +119,7 @@ class SincronizacionTest extends CrmTestCase
 
         $this->postJson('/api/v1/sincronizacion', ['visitas' => [
             $this->visitaOffline($institucion->id, $docente->id, ['fecha_visita' => now()->subDays(Visita::DIAS_OFFLINE + 1)->toIso8601String()]),
-            $this->visitaOffline($institucion->id, $docente->id, ['fecha_visita' => now()->addDay()->toIso8601String()]),
+            $this->visitaOffline($institucion->id, $docente->id, ['fecha_visita' => now()->addDays(Visita::MAX_DIAS_FUTURO + 1)->toIso8601String()]),
         ]])
             ->assertOk()
             ->assertJsonPath('data.rechazadas', 2);

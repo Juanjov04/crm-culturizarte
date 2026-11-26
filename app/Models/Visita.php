@@ -18,6 +18,9 @@ class Visita extends Model
     /** Días que puede esperar una visita registrada sin conexión para sincronizarse (Sprint 6). */
     public const DIAS_OFFLINE = 7;
 
+    /** Hasta cuántos días hacia el futuro puede programarse la fecha de la visita en la app. */
+    public const MAX_DIAS_FUTURO = 365;
+
     protected $guarded = [];
 
     protected function casts(): array
