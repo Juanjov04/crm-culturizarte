@@ -7,7 +7,7 @@
              Title="Mi inventario">
     <!-- Sprint 5 (CU-M03): stock de muestras del asesor y disponibilidad en bodega. -->
     <Grid RowDefinitions="Auto,*">
-        <SearchBar x:Name="Buscador" Placeholder="Buscar por título, código o área"
+        <SearchBar x:Name="Buscador" Placeholder="Buscar por título o área"
                    TextChanged="OnBuscar" Margin="10,8,10,0" BackgroundColor="White" />
 
         <RefreshView Grid.Row="1" x:Name="Refresco" Refreshing="OnRefrescar" RefreshColor="{StaticResource Primary}">
@@ -40,7 +40,6 @@
                                 </Border>
                                 <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Detalle}" FontSize="13"
                                        TextColor="{StaticResource TextoSuave}" />
-                                <Label Grid.Row="2" Text="{Binding CodigoIsbn}" FontSize="12" TextColor="#94A3B8" />
                                 <Label Grid.Row="2" Grid.Column="1" Text="{Binding BodegaTexto}" FontSize="12" TextColor="#94A3B8" />
                             </Grid>
                         </Border>
