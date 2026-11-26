@@ -17,19 +17,8 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        // Como en el prototipo (Figura 9), se listan los usuarios precargados para agilizar las pruebas.
-        // En producción no se muestran para no exponer los correos de la fuerza de ventas.
-        $precargados = ['Asesor' => collect(), 'Administrador' => collect()];
-
-        if (! app()->isProduction()) {
-            foreach (array_keys($precargados) as $rol) {
-                // whereHas en lugar de User::role(): no falla si el rol aún no se ha sembrado.
-                $precargados[$rol] = User::whereHas('roles', fn ($q) => $q->where('name', $rol))
-                    ->orderBy('name')->limit(6)->get(['id', 'name', 'email']);
-            }
-        }
-
-        return view('auth.login', ['precargados' => $precargados]);
+        // Solo correo y contraseña: no se listan usuarios ni se elige el perfil en esta pantalla.
+        return view('auth.login');
     }
 
     /**

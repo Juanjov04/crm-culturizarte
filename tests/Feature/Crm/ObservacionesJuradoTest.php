@@ -224,4 +224,21 @@ class ObservacionesJuradoTest extends CrmTestCase
 
         $this->assertSame(0, Institucion::count());
     }
+
+    public function test_pantalla_de_acceso_solo_pide_correo_y_contrasena(): void
+    {
+        $asesor = $this->usuarioConRol('Asesor');
+
+        $this->get('/login')
+            ->assertOk()
+            ->assertSee('Correo electrónico')
+            ->assertSee('Contraseña')
+            ->assertDontSee('Asesor Móvil')
+            ->assertDontSee('Admin Maestro')
+            ->assertDontSee('Seleccionar asesor de campo')
+            ->assertDontSee('Contraseña del asesor')
+            ->assertDontSee('El asesor registra sus visitas desde la app móvil')
+            // No se exponen los correos de los usuarios registrados.
+            ->assertDontSee($asesor->email);
+    }
 }
