@@ -59,8 +59,9 @@ class VisitaRequest extends FormRequest
             ],
             'nivel_interes' => ['required', Rule::in(Visita::NIVELES_INTERES)],
             'estado_adopcion' => ['required', Rule::in(Visita::ESTADOS_ADOPCION)],
-            'acuerdos' => ['nullable', 'string', 'max:2000'],
-            'observaciones' => ['nullable', 'string', 'max:2000'],
+            // Todos los campos del formulario de visita son obligatorios.
+            'acuerdos' => ['required', 'string', 'max:2000'],
+            'observaciones' => ['required', 'string', 'max:2000'],
             'latitud' => ['nullable', 'numeric', 'between:-90,90'],
             'longitud' => ['nullable', 'numeric', 'between:-180,180'],
 
@@ -70,7 +71,8 @@ class VisitaRequest extends FormRequest
                 'required', 'integer', 'distinct',
                 Rule::exists('productos', 'id')->where('activo', true),
             ],
-            'muestras.*.formato' => ['required', Rule::in(MuestraEntregada::FORMATOS)],
+            // Solo hay libros físicos; el campo es opcional para versiones anteriores de la app.
+            'muestras.*.formato' => ['sometimes', Rule::in(MuestraEntregada::FORMATOS)],
             'muestras.*.cantidad' => ['required', 'integer', 'min:1', 'max:100'],
         ];
     }
@@ -96,6 +98,7 @@ class VisitaRequest extends FormRequest
             'fecha_visita' => 'fecha de la visita',
             'nivel_interes' => 'nivel de interés',
             'estado_adopcion' => 'estado del docente frente a la adopción',
+            'acuerdos' => 'acuerdos alcanzados',
             'muestras.*.producto_id' => 'texto escolar',
             'muestras.*.formato' => 'formato de la muestra',
             'muestras.*.cantidad' => 'cantidad',

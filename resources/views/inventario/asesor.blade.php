@@ -37,7 +37,7 @@
                     </tbody>
                 </table>
             </div>
-            <p class="mt-3 text-xs text-slate-500">Las muestras digitales no descuentan stock; las físicas solo se pueden entregar si tienes unidades disponibles.</p>
+            <p class="mt-3 text-xs text-slate-500">Las muestras solo se pueden entregar si tienes unidades disponibles; cada entrega descuenta de tu inventario.</p>
         </div>
     </div>
 </x-app-layout>

@@ -32,11 +32,11 @@
                 <Border Style="{StaticResource Tarjeta}">
                     <VerticalStackLayout Spacing="4">
                         <Label Text="PASO 1 · INSTITUCIÓN Y DOCENTE" Style="{StaticResource Paso}" />
-                        <Label Text="Institución" Style="{StaticResource Etiqueta}" />
+                        <Label Text="Institución *" Style="{StaticResource Etiqueta}" />
                         <Picker x:Name="InstitucionPicker" Title="Selecciona la institución"
                                 ItemDisplayBinding="{Binding Descripcion}"
                                 SelectedIndexChanged="OnInstitucionCambiada" />
-                        <Label Text="Docente visitado" Style="{StaticResource Etiqueta}" />
+                        <Label Text="Docente visitado *" Style="{StaticResource Etiqueta}" />
                         <Picker x:Name="DocentePicker" Title="Selecciona el docente visitado"
                                 ItemDisplayBinding="{Binding Descripcion}" IsEnabled="False"
                                 SelectedIndexChanged="OnDocenteCambiado" />
@@ -51,19 +51,19 @@
                         <Label Text="PASO 2 · REGISTRO DE ACUERDOS" Style="{StaticResource Paso}" />
                         <!-- Observación del jurado: la visita se registra con la fecha y hora actual (no editable). -->
                         <!-- Observación del jurado: se puede elegir fecha y hora, pero nunca anteriores al registro. -->
-                        <Label Text="Fecha y hora" Style="{StaticResource Etiqueta}" />
+                        <Label Text="Fecha y hora *" Style="{StaticResource Etiqueta}" />
                         <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
                             <DatePicker x:Name="FechaPicker" Format="dd/MM/yyyy" DateSelected="OnFechaCambiada" />
                             <TimePicker x:Name="HoraPicker" Grid.Column="1" Format="HH:mm" PropertyChanged="OnHoraCambiada" />
                         </Grid>
                         <Label x:Name="FechaAyudaLabel" Text="Solo se permiten la fecha y hora actuales o posteriores." FontSize="11" TextColor="{StaticResource TextoSuave}" />
-                        <Label Text="Nivel de interés" Style="{StaticResource Etiqueta}" />
+                        <Label Text="Nivel de interés *" Style="{StaticResource Etiqueta}" />
                         <Picker x:Name="InteresPicker" Title="Nivel de interés" />
-                        <Label Text="Estado del docente frente a la adopción" Style="{StaticResource Etiqueta}" />
+                        <Label Text="Estado del docente frente a la adopción *" Style="{StaticResource Etiqueta}" />
                         <Picker x:Name="EstadoPicker" Title="Estado del docente" />
-                        <Label Text="Acuerdos alcanzados" Style="{StaticResource Etiqueta}" />
+                        <Label Text="Acuerdos alcanzados *" Style="{StaticResource Etiqueta}" />
                         <Editor x:Name="AcuerdosEditor" Placeholder="Ej. Revisará muestras de Lengua 5.º EGB" AutoSize="TextChanges" MinimumHeightRequest="80" MaxLength="2000" />
-                        <Label Text="Observaciones" Style="{StaticResource Etiqueta}" />
+                        <Label Text="Observaciones *" Style="{StaticResource Etiqueta}" />
                         <Editor x:Name="ObservacionesEditor" Placeholder="Observaciones" AutoSize="TextChanges" MinimumHeightRequest="80" MaxLength="2000" />
                     </VerticalStackLayout>
                 </Border>
@@ -77,17 +77,9 @@
                         <VerticalStackLayout x:Name="MuestraForm" Spacing="4" IsVisible="False">
                             <Label Text="Texto escolar" Style="{StaticResource Etiqueta}" />
                             <Picker x:Name="ProductoPicker" Title="Selecciona el texto" ItemDisplayBinding="{Binding Descripcion}" />
-                            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                                <VerticalStackLayout>
-                                    <Label Text="Formato" Style="{StaticResource Etiqueta}" />
-                                    <Picker x:Name="FormatoPicker" Title="Formato" />
-                                </VerticalStackLayout>
-                                <VerticalStackLayout Grid.Column="1">
-                                    <Label x:Name="CantidadLabel" Text="Cantidad: 1" Style="{StaticResource Etiqueta}" />
-                                    <Stepper x:Name="CantidadStepper" Minimum="1" Maximum="100" Value="1" Increment="1"
-                                             ValueChanged="OnCantidadCambiada" />
-                                </VerticalStackLayout>
-                            </Grid>
+                            <Label x:Name="CantidadLabel" Text="Cantidad: 1" Style="{StaticResource Etiqueta}" />
+                            <Stepper x:Name="CantidadStepper" Minimum="1" Maximum="100" Value="1" Increment="1"
+                                     ValueChanged="OnCantidadCambiada" />
                             <Button Text="+ Agregar muestra" Clicked="OnAgregarMuestra" Margin="0,6,0,0"
                                     BackgroundColor="{StaticResource Secondary}" TextColor="{StaticResource Primary}" />
                         </VerticalStackLayout>

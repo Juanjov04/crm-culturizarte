@@ -37,7 +37,6 @@
                         <tr>
                             <th class="px-5 py-3.5">Fecha</th>
                             <th class="px-5 py-3.5">Texto</th>
-                            <th class="px-5 py-3.5">Formato</th>
                             <th class="px-5 py-3.5 text-center">Cantidad</th>
                             <th class="px-5 py-3.5">Asesor</th>
                             <th class="px-5 py-3.5 text-right">Visita</th>
@@ -48,7 +47,6 @@
                             <tr>
                                 <td class="px-5 py-3.5">{{ $muestra->visita->fecha_visita->format('d/m/Y H:i') }}</td>
                                 <td class="px-5 py-3.5 font-medium text-gray-900">{{ $muestra->producto->nombre_completo }}</td>
-                                <td class="px-5 py-3.5">{{ $muestra->formato_texto }}</td>
                                 <td class="px-5 py-3.5 text-center">{{ $muestra->cantidad }}</td>
                                 <td class="px-5 py-3.5">{{ $muestra->visita->user->name }}</td>
                                 <td class="px-5 py-3.5 text-right">

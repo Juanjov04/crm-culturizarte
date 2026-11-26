@@ -31,6 +31,8 @@ class MuestrasTest extends CrmTestCase
             'fecha_visita' => now()->toIso8601String(),
             'nivel_interes' => 'alto',
             'estado_adopcion' => 'interesado',
+            'acuerdos' => 'Revisará las muestras con su área',
+            'observaciones' => 'Docente receptivo',
             'muestras' => $muestras,
         ];
     }
@@ -194,20 +196,38 @@ class MuestrasTest extends CrmTestCase
         $this->assertSame(2, $this->stockDe($asesor, $producto));
     }
 
-    public function test_muestra_digital_no_requiere_ni_descuenta_stock(): void
+    public function test_no_se_aceptan_muestras_digitales(): void
     {
         $institucion = $this->institucion();
         $docente = $this->docente($institucion);
         $producto = $this->producto();
         $asesor = $this->usuarioConRol('Asesor');
+        $this->asignar($asesor, $producto, 5);
+        Sanctum::actingAs($asesor);
+
+        // La editorial solo entrega libros físicos.
+        $this->postJson('/api/v1/visitas', $this->datosVisita($institucion->id, $docente->id, [
+            ['producto_id' => $producto->id, 'formato' => 'digital', 'cantidad' => 1],
+        ]))->assertUnprocessable()->assertJsonValidationErrors('muestras.0.formato');
+
+        $this->assertSame(5, $this->stockDe($asesor, $producto));
+    }
+
+    public function test_la_muestra_sin_formato_es_fisica_y_descuenta_stock(): void
+    {
+        $institucion = $this->institucion();
+        $docente = $this->docente($institucion);
+        $producto = $this->producto();
+        $asesor = $this->usuarioConRol('Asesor');
+        $this->asignar($asesor, $producto, 5);
         Sanctum::actingAs($asesor);
 
         $this->postJson('/api/v1/visitas', $this->datosVisita($institucion->id, $docente->id, [
-            ['producto_id' => $producto->id, 'formato' => 'digital', 'cantidad' => 1],
+            ['producto_id' => $producto->id, 'cantidad' => 2],
         ]))->assertCreated();
 
-        $this->assertDatabaseHas('muestra_entregadas', ['producto_id' => $producto->id, 'formato' => 'digital']);
-        $this->assertSame(0, $this->stockDe($asesor, $producto));
+        $this->assertDatabaseHas('muestra_entregadas', ['producto_id' => $producto->id, 'formato' => 'fisica', 'cantidad' => 2]);
+        $this->assertSame(3, $this->stockDe($asesor, $producto));
     }
 
     public function test_texto_debe_ser_compatible_con_el_area_del_docente(): void
@@ -242,7 +262,7 @@ class MuestrasTest extends CrmTestCase
         Sanctum::actingAs($this->usuarioConRol('Asesor'));
 
         $this->postJson('/api/v1/visitas', $this->datosVisita($institucion->id, $docente->id, [
-            ['producto_id' => $producto->id, 'formato' => 'digital', 'cantidad' => 1],
+            ['producto_id' => $producto->id, 'formato' => 'fisica', 'cantidad' => 1],
         ]))->assertUnprocessable()->assertJsonValidationErrors('muestras.0.producto_id');
     }
 
@@ -280,6 +300,8 @@ class MuestrasTest extends CrmTestCase
                 'docente_id' => $docente->id,
                 'nivel_interes' => 'alto',
                 'estado_adopcion' => 'interesado',
+                'acuerdos' => 'Revisará las muestras con su área',
+                'observaciones' => 'Docente receptivo',
                 'muestras' => [['producto_id' => $producto->id, 'formato' => 'fisica', 'cantidad' => 1]],
             ])
             ->assertRedirect()

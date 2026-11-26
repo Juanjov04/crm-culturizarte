@@ -70,7 +70,7 @@ class RegistrarVisita
 
     /**
      * RF-03: valida la compatibilidad con el área del docente y el stock del
-     * asesor (solo muestras físicas), registra la entrega y descuenta el stock.
+     * asesor (todas las muestras son físicas), registra la entrega y descuenta el stock.
      */
     private function registrarMuestras(User $asesor, Visita $visita, array $muestras): void
     {
@@ -92,31 +92,29 @@ class RegistrarVisita
                 continue;
             }
 
-            if ($muestra['formato'] === 'fisica') {
-                $inventario = InventarioAsesor::where('user_id', $asesor->id)
-                    ->where('producto_id', $producto->id)
-                    ->lockForUpdate()
-                    ->first();
-                $disponible = $inventario?->cantidad ?? 0;
+            $inventario = InventarioAsesor::where('user_id', $asesor->id)
+                ->where('producto_id', $producto->id)
+                ->lockForUpdate()
+                ->first();
+            $disponible = $inventario?->cantidad ?? 0;
 
-                if ($disponible === 0) {
-                    $errores["muestras.{$i}.cantidad"] = "No tienes stock de «{$producto->nombre_completo}» para entregar una muestra física.";
+            if ($disponible === 0) {
+                $errores["muestras.{$i}.cantidad"] = "No tienes stock de «{$producto->nombre_completo}» para entregarlo como muestra.";
 
-                    continue;
-                }
-
-                if ($cantidad > $disponible) {
-                    $errores["muestras.{$i}.cantidad"] = "Solo tienes {$disponible} unidades de «{$producto->nombre_completo}» en tu inventario.";
-
-                    continue;
-                }
-
-                $inventario->decrement('cantidad', $cantidad);
+                continue;
             }
+
+            if ($cantidad > $disponible) {
+                $errores["muestras.{$i}.cantidad"] = "Solo tienes {$disponible} unidades de «{$producto->nombre_completo}» en tu inventario.";
+
+                continue;
+            }
+
+            $inventario->decrement('cantidad', $cantidad);
 
             $visita->muestrasEntregadas()->create([
                 'producto_id' => $producto->id,
-                'formato' => $muestra['formato'],
+                'formato' => 'fisica',
                 'cantidad' => $cantidad,
             ]);
         }

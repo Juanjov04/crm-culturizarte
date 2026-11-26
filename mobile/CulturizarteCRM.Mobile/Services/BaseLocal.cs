@@ -93,11 +93,11 @@ public class BaseLocal
     public async Task<DateTime?> UltimaDescargaAsync()
         => (await (await DbAsync()).FindAsync<CatalogoLocal>(ClaveInventario))?.ActualizadoEn;
 
-    /// <summary>Descuenta del inventario local las muestras físicas entregadas sin conexión.</summary>
+    /// <summary>Descuenta del inventario local las muestras entregadas sin conexión.</summary>
     public async Task DescontarStockAsync(IEnumerable<NuevaMuestra> muestras)
     {
         var inventario = await GetInventarioAsync();
-        foreach (var muestra in muestras.Where(m => m.Formato == "fisica"))
+        foreach (var muestra in muestras)
         {
             var producto = inventario.FirstOrDefault(p => p.Id == muestra.ProductoId);
             if (producto is not null)

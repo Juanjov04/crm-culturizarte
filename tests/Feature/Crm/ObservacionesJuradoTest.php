@@ -24,6 +24,8 @@ class ObservacionesJuradoTest extends CrmTestCase
             'docente_id' => $docente->id,
             'nivel_interes' => 'medio',
             'estado_adopcion' => 'prospecto',
+            'acuerdos' => 'Revisará las muestras con su área',
+            'observaciones' => 'Docente receptivo',
         ];
     }
 
@@ -241,5 +243,19 @@ class ObservacionesJuradoTest extends CrmTestCase
             ->assertDontSee('El asesor registra sus visitas desde la app móvil')
             // No se exponen los correos de los usuarios registrados.
             ->assertDontSee($asesor->email);
+    }
+
+    public function test_la_visita_exige_todos_los_campos(): void
+    {
+        Sanctum::actingAs($this->usuarioConRol('Asesor'));
+
+        $this->postJson('/api/v1/visitas', $this->visita(['acuerdos' => '', 'observaciones' => '   ']))
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['acuerdos', 'observaciones']);
+
+        $this->actingAs($this->usuarioConRol('Asesor'))
+            ->get(route('visitas.create'))
+            ->assertSee('Acuerdos alcanzados *')
+            ->assertSee('Observaciones *');
     }
 }

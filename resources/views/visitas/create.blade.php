@@ -29,7 +29,7 @@
                     get areaDocente() { return (this.docentes.find(d => String(d.id) === String(this.docente)) ?? {}).area ?? null; },
                     get compatibles() { return this.productos.filter(p => p.area === this.areaDocente); },
                     producto(id) { return this.productos.find(p => String(p.id) === String(id)); },
-                    agregar() { this.muestras.push({ producto_id: '', formato: 'fisica', cantidad: 1 }); },
+                    agregar() { this.muestras.push({ producto_id: '', cantidad: 1 }); },
                 }">
                 @csrf
 
@@ -95,14 +95,14 @@
                     </div>
 
                     <div>
-                        <x-input-label for="acuerdos" value="Acuerdos alcanzados" />
-                        <textarea id="acuerdos" name="acuerdos" rows="3" class="mt-1 block w-full">{{ old('acuerdos') }}</textarea>
+                        <x-input-label for="acuerdos" value="Acuerdos alcanzados *" />
+                        <textarea id="acuerdos" name="acuerdos" rows="3" class="mt-1 block w-full" required>{{ old('acuerdos') }}</textarea>
                         <x-input-error :messages="$errors->get('acuerdos')" class="mt-2" />
                     </div>
 
                     <div>
-                        <x-input-label for="observaciones" value="Observaciones" />
-                        <textarea id="observaciones" name="observaciones" rows="3" class="mt-1 block w-full">{{ old('observaciones') }}</textarea>
+                        <x-input-label for="observaciones" value="Observaciones *" />
+                        <textarea id="observaciones" name="observaciones" rows="3" class="mt-1 block w-full" required>{{ old('observaciones') }}</textarea>
                         <x-input-error :messages="$errors->get('observaciones')" class="mt-2" />
                     </div>
                 </fieldset>
@@ -116,7 +116,7 @@
 
                     <template x-for="(m, i) in muestras" :key="i">
                         <div class="grid grid-cols-12 items-start gap-3 rounded-xl border border-slate-200 p-3">
-                            <div class="col-span-12 sm:col-span-6">
+                            <div class="col-span-12 sm:col-span-9">
                                 <select :name="`muestras[${i}][producto_id]`" x-model="m.producto_id" class="block w-full" required>
                                     <option value="">Seleccione el texto</option>
                                     <template x-for="p in compatibles" :key="p.id">
@@ -125,19 +125,13 @@
                                 </select>
                                 <p class="mt-1 text-xs text-slate-500" x-text="producto(m.producto_id)?.detalle ?? ''"></p>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
-                                <select :name="`muestras[${i}][formato]`" x-model="m.formato" class="block w-full">
-                                    <option value="fisica">Física</option>
-                                    <option value="digital">Digital</option>
-                                </select>
-                            </div>
                             <div class="col-span-4 sm:col-span-2">
-                                <input type="number" min="1" :max="m.formato === 'fisica' ? (producto(m.producto_id)?.stock || 1) : 100"
+                                <input type="number" min="1" :max="producto(m.producto_id)?.stock || 1"
                                     :name="`muestras[${i}][cantidad]`" x-model="m.cantidad" class="block w-full" required>
                             </div>
                             <button type="button" @click="muestras.splice(i, 1)" class="col-span-2 sm:col-span-1 py-2 text-slate-400 hover:text-red-600" title="Quitar">✕</button>
-                            <p x-show="m.formato === 'fisica' && producto(m.producto_id) && producto(m.producto_id).stock === 0"
-                                class="col-span-12 text-xs text-red-600">No tienes stock de este texto: solo puedes entregarlo en formato digital.</p>
+                            <p x-show="producto(m.producto_id) && producto(m.producto_id).stock === 0"
+                                class="col-span-12 text-xs text-red-600">No tienes stock de este texto para entregarlo como muestra.</p>
                         </div>
                     </template>
 

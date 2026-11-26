@@ -10,7 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class MuestraEntregada extends Model
 {
-    public const FORMATOS = ['fisica', 'digital'];
+    /** La editorial solo entrega muestras físicas (no hay libros digitales). */
+    public const FORMATOS = ['fisica'];
 
     protected $guarded = [];
 
@@ -29,8 +30,4 @@ class MuestraEntregada extends Model
         return $this->belongsTo(Producto::class);
     }
 
-    public function getFormatoTextoAttribute(): string
-    {
-        return $this->formato === 'digital' ? 'Digital' : 'Física';
-    }
 }

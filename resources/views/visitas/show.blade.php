@@ -47,7 +47,7 @@
                 <div>
                     <h3 class="text-sm font-semibold uppercase text-gray-500">Muestras entregadas</h3>
                     @forelse ($visita->muestrasEntregadas as $muestra)
-                        <p class="mt-1 text-gray-900">{{ $muestra->cantidad }} × {{ $muestra->producto->nombre_completo }} <span class="text-sm text-gray-500">({{ $muestra->formato_texto }})</span></p>
+                        <p class="mt-1 text-gray-900">{{ $muestra->cantidad }} × {{ $muestra->producto->nombre_completo }}</p>
                     @empty
                         <p class="mt-1 text-gray-900">No se entregaron muestras.</p>
                     @endforelse

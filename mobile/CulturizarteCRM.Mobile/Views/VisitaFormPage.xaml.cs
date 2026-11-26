@@ -14,7 +14,6 @@ public partial class VisitaFormPage : ContentPage
 {
     private static readonly string[] Niveles = ["bajo", "medio", "alto"];
     private static readonly string[] Estados = ["prospecto", "interesado", "adoptado", "desertado"];
-    private static readonly string[] Formatos = ["fisica", "digital"];
 
     /// <summary>Igual que Visita::MAX_DIAS_FUTURO en el servidor.</summary>
     private const int MaxDiasFuturo = 365;
@@ -35,8 +34,6 @@ public partial class VisitaFormPage : ContentPage
         InteresPicker.SelectedIndex = 1;
         EstadoPicker.ItemsSource = Estados.Select(Capitalizar).ToList();
         EstadoPicker.SelectedIndex = 0;
-        FormatoPicker.ItemsSource = new List<string> { "Física", "Digital" };
-        FormatoPicker.SelectedIndex = 0;
 
         BindableLayout.SetItemsSource(MuestrasLista, _muestras);
         PonerFechaActual();
@@ -145,7 +142,7 @@ public partial class VisitaFormPage : ContentPage
         ProductoPicker.SelectedIndex = -1;
         MuestraForm.IsVisible = compatibles.Count > 0;
         MuestrasAyudaLabel.Text = compatibles.Count > 0
-            ? $"Textos de {docente.AreaAsignatura}. Las muestras físicas descuentan de tu inventario."
+            ? $"Textos de {docente.AreaAsignatura}. Cada muestra descuenta de tu inventario."
             : $"No hay textos del catálogo para el área {docente.AreaAsignatura}.";
     }
 
@@ -168,17 +165,16 @@ public partial class VisitaFormPage : ContentPage
             return;
         }
 
-        var formato = Formatos[Math.Max(FormatoPicker.SelectedIndex, 0)];
         var cantidad = (int)CantidadStepper.Value;
 
-        // Misma regla que el servidor: sin stock no se entrega una muestra física.
-        if (formato == "fisica" && producto.StockAsesor == 0)
+        // Misma regla que el servidor: sin stock no se entrega la muestra.
+        if (producto.StockAsesor == 0)
         {
-            MostrarError($"No tienes stock de «{producto.Titulo}». Solo puedes entregarlo en formato digital.");
+            MostrarError($"No tienes stock de «{producto.Titulo}» para entregarlo como muestra.");
             return;
         }
 
-        if (formato == "fisica" && cantidad > producto.StockAsesor)
+        if (cantidad > producto.StockAsesor)
         {
             MostrarError($"Solo tienes {producto.StockAsesor} unidades de «{producto.Titulo}».");
             return;
@@ -188,7 +184,6 @@ public partial class VisitaFormPage : ContentPage
         {
             ProductoId = producto.Id,
             Titulo = producto.NombreCompleto,
-            Formato = formato,
             Cantidad = cantidad,
         });
 
@@ -217,6 +212,25 @@ public partial class VisitaFormPage : ContentPage
         if (DocentePicker.SelectedItem is not Docente docente)
         {
             MostrarError("Selecciona el docente visitado.");
+            return;
+        }
+
+        // Todos los campos son obligatorios.
+        if (InteresPicker.SelectedIndex < 0 || EstadoPicker.SelectedIndex < 0)
+        {
+            MostrarError("Selecciona el nivel de interés y el estado del docente.");
+            return;
+        }
+
+        if (Limpiar(AcuerdosEditor.Text) is null)
+        {
+            MostrarError("Escribe los acuerdos alcanzados en la visita.");
+            return;
+        }
+
+        if (Limpiar(ObservacionesEditor.Text) is null)
+        {
+            MostrarError("Escribe las observaciones de la visita.");
             return;
         }
 

@@ -125,11 +125,11 @@ class IndicadoresController extends Controller
             ->get();
 
         return [
-            ['fecha', 'asesor', 'colegio', 'provincia', 'docente', 'codigo_texto', 'texto', 'edicion', 'serie', 'grado', 'formato', 'cantidad'],
+            ['fecha', 'asesor', 'colegio', 'provincia', 'docente', 'codigo_texto', 'texto', 'edicion', 'serie', 'grado', 'cantidad'],
             $muestras->sortBy(fn ($m) => $m->visita->fecha_visita)->map(fn ($m) => [
                 $m->visita->fecha_visita->format('Y-m-d'), $m->visita->user->name, $m->visita->institucion->nombre, $m->visita->institucion->provincia,
                 $m->visita->docente?->nombre_completo, $m->producto->codigo_isbn, $m->producto->titulo, $m->producto->edicion,
-                $m->producto->serie, $m->producto->nivel_educativo, $m->formato, $m->cantidad,
+                $m->producto->serie, $m->producto->nivel_educativo, $m->cantidad,
             ]),
         ];
     }

@@ -22,6 +22,8 @@ class SincronizacionTest extends CrmTestCase
             'fecha_visita' => now()->subDays(2)->toIso8601String(),
             'nivel_interes' => 'alto',
             'estado_adopcion' => 'interesado',
+            'acuerdos' => 'Revisará las muestras con su área',
+            'observaciones' => 'Docente receptivo',
         ];
     }
 

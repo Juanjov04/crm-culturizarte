@@ -76,6 +76,7 @@ class ApiTest extends CrmTestCase
             'fecha_visita' => now()->toIso8601String(),
             'nivel_interes' => 'alto',
             'estado_adopcion' => 'interesado',
+            'observaciones' => 'Docente receptivo',
             'acuerdos' => 'Enviar muestras de 5to EGB',
         ];
 
@@ -101,6 +102,8 @@ class ApiTest extends CrmTestCase
             'docente_id' => $docente->id,
             'nivel_interes' => 'medio',
             'estado_adopcion' => 'prospecto',
+            'acuerdos' => 'Revisará las muestras con su área',
+            'observaciones' => 'Docente receptivo',
         ];
 
         // En la app se puede elegir una fecha y hora hacia adelante.
@@ -124,6 +127,8 @@ class ApiTest extends CrmTestCase
             'fecha_visita' => now()->toIso8601String(),
             'nivel_interes' => 'medio',
             'estado_adopcion' => 'prospecto',
+            'acuerdos' => 'Revisará las muestras con su área',
+            'observaciones' => 'Docente receptivo',
         ])->assertUnprocessable()->assertJsonValidationErrors('docente_id');
     }
 

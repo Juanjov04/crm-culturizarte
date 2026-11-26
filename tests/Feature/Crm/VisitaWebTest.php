@@ -24,6 +24,7 @@ class VisitaWebTest extends CrmTestCase
                 'docente_id' => $docente->id,
                 'nivel_interes' => 'medio',
                 'estado_adopcion' => 'prospecto',
+                'acuerdos' => 'Revisará las muestras con su área',
                 'observaciones' => 'Pidió catálogo digital',
             ])
             ->assertRedirect();

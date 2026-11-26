@@ -113,7 +113,7 @@ public class NuevaMuestra
     [JsonPropertyName("cantidad")] public int Cantidad { get; set; } = 1;
 
     [JsonIgnore] public string Titulo { get; set; } = "";
-    [JsonIgnore] public string Resumen => $"{Cantidad} × {Titulo} ({(Formato == "digital" ? "digital" : "física")})";
+    [JsonIgnore] public string Resumen => $"{Cantidad} × {Titulo}";
 }
 
 /// <summary>Datos que envía el formulario de visita (RF-01).</summary>
