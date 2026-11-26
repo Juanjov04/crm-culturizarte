@@ -1,7 +1,6 @@
 <x-guest-layout>
     <div class="text-center">
         <h1 class="text-xl font-bold text-white">Acceso al Portal CRM</h1>
-        <p class="mt-1 text-sm text-slate-400">Gestión de Visitas B2B e Inteligencia de Negocios</p>
     </div>
 
     <x-auth-session-status class="mt-4" :status="session('status')" />

@@ -237,6 +237,7 @@ class ObservacionesJuradoTest extends CrmTestCase
             ->assertDontSee('Admin Maestro')
             ->assertDontSee('Seleccionar asesor de campo')
             ->assertDontSee('Contraseña del asesor')
+            ->assertDontSee('Gestión de Visitas B2B e Inteligencia de Negocios')
             ->assertDontSee('El asesor registra sus visitas desde la app móvil')
             // No se exponen los correos de los usuarios registrados.
             ->assertDontSee($asesor->email);
