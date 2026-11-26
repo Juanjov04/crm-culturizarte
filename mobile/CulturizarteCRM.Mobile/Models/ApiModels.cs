@@ -90,7 +90,7 @@ public class Producto
     public string StockTexto => StockAsesor == 1 ? "1 unidad" : $"{StockAsesor} unidades";
     public string BodegaTexto => $"Bodega: {StockBodega}";
     public bool SinStock => StockAsesor == 0;
-    public string Descripcion => $"{NombreCompleto} (stock: {StockAsesor})";
+    public string Descripcion => NombreCompleto;
 
     /// <summary>RF-03: mismo criterio del servidor (sin mayúsculas, tildes ni espacios extra).</summary>
     public bool EsCompatibleCon(Docente docente) => Normalizar(Area) == Normalizar(docente.AreaAsignatura);

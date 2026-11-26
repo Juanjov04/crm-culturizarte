@@ -120,7 +120,7 @@
                                 <select :name="`muestras[${i}][producto_id]`" x-model="m.producto_id" class="block w-full" required>
                                     <option value="">Seleccione el texto</option>
                                     <template x-for="p in compatibles" :key="p.id">
-                                        <option :value="p.id" x-text="`${p.titulo} (stock: ${p.stock})`" :selected="String(p.id) === String(m.producto_id)"></option>
+                                        <option :value="p.id" x-text="p.titulo" :selected="String(p.id) === String(m.producto_id)"></option>
                                     </template>
                                 </select>
                                 <p class="mt-1 text-xs text-slate-500" x-text="producto(m.producto_id)?.detalle ?? ''"></p>
