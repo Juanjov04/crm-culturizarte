@@ -18,17 +18,6 @@
         </div>
 
         <div class="flex items-center gap-3">
-            <span class="hidden items-center gap-2 rounded-full border border-slate-200 bg-slate-50 p-1 text-xs font-semibold md:flex">
-                <span @class(['flex items-center gap-1.5 rounded-full px-3 py-1', 'bg-slate-900 text-white' => ! $veTodo, 'text-slate-500' => $veTodo])>
-                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>
-                    Asesor
-                </span>
-                <span @class(['flex items-center gap-1.5 rounded-full px-3 py-1', 'bg-slate-900 text-white' => $veTodo, 'text-slate-500' => ! $veTodo])>
-                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg>
-                    Gerencia (Web)
-                </span>
-            </span>
-
             <div class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 py-1 pl-1 pr-2">
                 <a href="{{ route('profile.edit') }}" class="flex items-center gap-2" title="Mi perfil">
                     <span class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-[11px] font-bold text-white">{{ $iniciales }}</span>
@@ -100,10 +89,4 @@
         @endhasanyrole
     </nav>
 
-    <div class="mt-auto rounded-xl bg-white/5 px-4 py-3 text-xs text-slate-400">
-        <span class="flex items-center gap-2 font-semibold text-slate-200">
-            <span class="h-2 w-2 rounded-full bg-green-400"></span> Servidor activo
-        </span>
-        <span class="mt-1 block">Editorial Culturizarte · CRM B2B</span>
-    </div>
 </aside>

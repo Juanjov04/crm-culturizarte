@@ -21,9 +21,6 @@
             @hasanyrole('Administrador|Gerente')
                 <a href="{{ route('indicadores.index') }}" class="btn-secondary">Indicadores (BI)</a>
             @endhasanyrole
-            <span class="pill border border-slate-200 bg-white py-1.5 text-slate-600">
-                <span class="h-2 w-2 rounded-full bg-green-500"></span> Servidor activo
-            </span>
             @hasanyrole('Administrador|Asesor')
                 <a href="{{ route('visitas.create') }}" class="btn-primary">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
